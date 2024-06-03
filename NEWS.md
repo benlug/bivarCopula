@@ -3,7 +3,7 @@
 ## Major changes
 
 * Added functions to fit Clayton copula models.
-* Improved documentation and added vignettes for detailed usage examples.
+* Improved documentation and added vignette for usage examples.
 
 # copulaStan 0.1.0
 
