@@ -1,8 +1,5 @@
 # copulaStan
 
-<!-- badges: start -->
-<!-- badges: end -->
-
 The `copulaStan` package provides functions to fit bivariate Gaussian and Clayton copula models using Stan. These models can handle both normal and non-normal marginals. 
 
 ## Installation
@@ -18,7 +15,7 @@ devtools::install_github("yourusername/copulaStan")
 
 This is a basic example which shows you how to fit a bivariate Gaussian copula model:
 
-```{r example, eval = FALSE}
+```r
 library(copula)
 library(copulaStan)
 library(rstan)
