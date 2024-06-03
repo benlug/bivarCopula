@@ -4,7 +4,7 @@ The `copulaStan` package provides functions to fit bivariate Gaussian and Clayto
 
 ## Installation
 
-You can install the development version of `copulaStan` from [GitHub](https://github.com/benlug/copulaStan) with:
+You can install the development version of `copulaStan` from ![GitHub](https://github.com/benlug/copulaStan) with:
 
 ```r
 # install.packages("devtools")
