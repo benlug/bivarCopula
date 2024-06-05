@@ -8,7 +8,7 @@ You can install the development version of `copulaStan` from [GitHub](https://gi
 
 ```r
 # install.packages("devtools")
-devtools::install_github("yourusername/copulaStan")
+devtools::install_github("benlug/copulaStan")
 ```
 
 ## Example
