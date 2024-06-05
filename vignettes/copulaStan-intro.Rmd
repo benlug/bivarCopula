@@ -1,81 +1,86 @@
 ---
-title: "Introduction to copulaStan"
+title: "copulaStan: Fitting Bivariate Gaussian and Clayton Copulas"
 author: "Benedikt Lugauer"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction to copulaStan}
+  %\VignetteIndexEntry{copulaStan: Fitting Bivariate Gaussian and Clayton Copulas}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-library(copulaStan)
-```
-
 # Introduction
 
-This vignette provides an introduction to the `copulaStan` package, which offers functions to fit bivariate Gaussian and Clayton copula models using Stan.
-
-# Installation
-
-To install the development version of `copulaStan` from GitHub, you can use:
+In this vignette, we demonstrate how to fit bivariate Gaussian copula models using the `copulaStan` package. We provide examples for fitting Gaussian copula models with different types of marginals, including normal, and lognormal distributions.
 
 ```{r}
-# install.packages("devtools")
-# devtools::install_github("benlug/copulaStan")
+library(copulaStan)
+library(copula)
 ```
 
-# Gaussian Copula
+## Example: Gaussian Copula with Normal and Lognormal Marginals
 
-The `fit_gaussian_copula` function fits a bivariate Gaussian copula model.
-
-## Example
-
-```{r}
-library(copula)
+```{r, eval=FALSE}
 library(copulaStan)
+library(copula)
 
-# generate data from a bivariate Gaussian copula
-set.seed(123)
-n <- 1000
+seed <- 123
+set.seed(seed)
 true_rho <- 0.5
+n <- 2000  
+
+margins <- c("norm", "lnorm")
+params <- list(list(mean = 0.8, sd = 2), list(meanlog = 0, sdlog = 0.8))
 cop <- normalCopula(param = true_rho, dim = 2)
-U <- rCopula(n, cop)
+mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
+data <- rMvdc(n, mvdc_copula)
 
-# fit Bayesian Gaussian copula model
-fit <- fit_gaussian_copula(U, 
+fit <- fit_gaussian_copula(data, marginals = c("normal", "lognormal"), 
                            iter = 4000, chains = 4, warmup = 2000,
-                           seed = 2024)
-fit
+                           seed = seed, cores = 4)
+print(fit$fit)
 ```
 
-# Clayton Copula
+## Derivation of Gaussian Copula Log Likelihood
 
-The `fit_clayton_copula` function fits a bivariate Clayton copula model.
+Here is a derivation of the Gaussian copula likelihood implemented in this package.
 
-## Example
+**Transformation to Uniform Marginals**:
+\[
+U_1 = F_1(X_1), \quad U_2 = F_2(X_2)
+\]
+where \(F_1\) and \(F_2\) are the CDFs of the marginals.
 
-```{r}
-library(copula)
-library(copulaStan)
+**Transformation to Standard Normal**:
+\[
+Z_1 = \Phi^{-1}(U_1), \quad Z_2 = \Phi^{-1}(U_2)
+\]
+where \(\Phi^{-1}\) is the inverse CDF of the standard normal distribution.
 
-# generate data from a bivariate Clayton copula
-set.seed(123)
-n <- 1000
-true_theta <- 2
-cop <- claytonCopula(param = true_theta, dim = 2)
-U <- rCopula(n, cop)
+**Bivariate Normal Density**:
+\[
+\phi_{\rho}(z_1, z_2) = \frac{1}{2\pi\sqrt{1-\rho^2}} \exp\left( -\frac{1}{2(1-\rho^2)}(z_1^2 + z_2^2 - 2\rho z_1 z_2) \right)
+\]
 
-# fit the Bayesian Clayton copula model
-fit <- fit_clayton_copula(U, 
-                          iter = 4000, chains = 4, warmup = 2000, thin = 1, 
-                          seed = 2024)
+**Standard Normal Marginal Density**:
+\[
+\phi(z) = \frac{1}{\sqrt{2\pi}} \exp\left( -\frac{z^2}{2} \right)
+\]
 
-fit
-```
+**Copula Density**:
+\[
+c(u_1, u_2; \rho) = \frac{\phi_{\rho}(z_1, z_2)}{\phi(z_1) \phi(z_2)}
+\]
+Substituting the expressions for \(\phi_{\rho}\) and \(\phi\):
+\[
+c(u_1, u_2; \rho) = \frac{\frac{1}{2\pi\sqrt{1-\rho^2}} \exp\left( -\frac{1}{2(1-\rho^2)}(z_1^2 + z_2^2 - 2\rho z_1 z_2) \right)}{\left( \frac{1}{\sqrt{2\pi}} \exp\left( -\frac{z_1^2}{2} \right) \right) \left( \frac{1}{\sqrt{2\pi}} \exp\left( -\frac{z_2^2}{2} \right) \right)}
+\]
+Simplifying, we get:
+\[
+c(u_1, u_2; \rho) = \frac{1}{\sqrt{1-\rho^2}} \exp\left( -\frac{1}{2(1-\rho^2)}(z_1^2 + z_2^2 - 2\rho z_1 z_2) + \frac{z_1^2}{2} + \frac{z_2^2}{2} \right)
+\]
 
+**Log Likelihood**:
+\[
+\log c(u_1, u_2; \rho) = -\frac{1}{2} \log(1-\rho^2) + \frac{\rho z_1 z_2 - \rho^2 (z_1^2 + z_2^2)}{2(1-\rho^2)}
+\]
 

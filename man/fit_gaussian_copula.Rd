@@ -2,10 +2,11 @@
 % Please edit documentation in R/fit_gaussian_copula.R
 \name{fit_gaussian_copula}
 \alias{fit_gaussian_copula}
-\title{Fit Bivariate Gaussian Copula Model}
+\title{Fit Bivariate Gaussian Copula Model with Optional Marginal Parameter Estimation}
 \usage{
 fit_gaussian_copula(
   U,
+  marginals,
   iter = 2000,
   chains = 4,
   warmup = 1000,
@@ -16,7 +17,9 @@ fit_gaussian_copula(
 )
 }
 \arguments{
-\item{U}{Data matrix of uniform marginals (U(0,1)), with two variables.}
+\item{U}{Data matrix of observed marginals, with two variables.}
+
+\item{marginals}{A list specifying the marginal distributions for each variable. Options are "normal" and "lognormal".}
 
 \item{iter}{Number of iterations for each chain. Default is 2000.}
 
@@ -36,5 +39,5 @@ fit_gaussian_copula(
 A fitted Stan model and extracted correlation matrix.
 }
 \description{
-Fit Bivariate Gaussian Copula Model
+Fit Bivariate Gaussian Copula Model with Optional Marginal Parameter Estimation
 }

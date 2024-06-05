@@ -1,42 +1,54 @@
 functions {
-  real gaussian_copula_lpdf(vector x1, vector x2, real rho) {
-    // this function computes the log likelihood for a Gaussian copula given two variables and a correlation parameter
-    int N = num_elements(x1);
-    vector[N] z1 = inv_Phi(x1); // apply standard normal cdf to both variables
-    vector[N] z2 = inv_Phi(x2);
-
-    real log_lik = 0; // init log likelihood
-
-    real rho_sq = square(rho);
-    for (n in 1:N) {
-      log_lik += -0.5 * log1m(rho_sq)
-                 + (2 * rho * z1[n] * z2[n] - rho_sq * (square(z1[n]) + square(z2[n]))) / (2 * (1 - rho_sq));
-    }
-
-    return log_lik;
-  }
+  #include gaussian_cop_loglik.stan
 }
 
 data {
   int<lower=0> N;                  // number of observations
-  vector<lower=0, upper=1>[N] x1;  // variable 1
-  vector<lower=0, upper=1>[N] x2;  // variable 2
+  vector[N] y1;                    // variable 1
+  vector[N] y2;                    // variable 2
+  int<lower=1, upper=2> dist1;     // distribution type for variable 1
+  int<lower=1, upper=2> dist2;     // distribution type for variable 2
 }
 
 parameters {
-  real<lower=-1, upper=1> rho;  // correlation parameter rho
+  real mu[2];
+  real<lower=0> sigma[2];
+  real<lower=-1, upper=1> rho;
 }
 
 model {
-  rho ~ uniform(-1, 1); // Prior for rho
+  vector[N] x1;
+  vector[N] x2;
 
-  target += gaussian_copula_lpdf(x1 | x2, rho);
-}
+  sigma ~ cauchy(0, 2);
+  rho ~ uniform(-1, 1);
 
-generated quantities {
-  matrix[2, 2] Omega;
-  Omega[1, 1] = 1;
-  Omega[1, 2] = rho;
-  Omega[2, 1] = rho;
-  Omega[2, 2] = 1;
+  // Marginal distributions
+  if (dist1 == 1) {
+    y1 ~ normal(mu[1], sigma[1]);
+    for (n in 1:N) {
+      x1[n] = normal_cdf(y1[n], mu[1], sigma[1]);
+    }
+  } else if (dist1 == 2) {
+    y1 ~ lognormal(mu[1], sigma[1]);
+    for (n in 1:N) {
+      x1[n] = lognormal_cdf(y1[n], mu[1], sigma[1]);
+    }
+  }
+
+  if (dist2 == 1) {
+    y2 ~ normal(mu[2], sigma[2]);
+    for (n in 1:N) {
+      x2[n] = normal_cdf(y2[n], mu[2], sigma[2]);
+    }
+  } else if (dist2 == 2) {
+    y2 ~ lognormal(mu[2], sigma[2]);
+    for (n in 1:N) {
+      x2[n] = lognormal_cdf(y2[n], mu[2], sigma[2]);
+    }
+  }
+
+  for (n in 1:N) {
+    target += gaussian_cop_loglik(inv_Phi(x1[n]), inv_Phi(x2[n]), rho);
+  }
 }

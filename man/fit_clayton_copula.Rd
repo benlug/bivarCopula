@@ -11,7 +11,7 @@ fit_clayton_copula(
   warmup = 1000,
   thin = 1,
   seed = NULL,
-  control = list(adapt_delta = 0.95, max_treedepth = 10),
+  control = list(adapt_delta = 0.8, max_treedepth = 10),
   cores = 1
 )
 }

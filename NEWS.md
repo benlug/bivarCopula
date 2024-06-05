@@ -1,9 +1,17 @@
+# copulaStan 0.3.0
+
+## New Features
+
+* Added the `fit_gaussian_copula` function to fit bivariate Gaussian copula models with optional marginal parameter estimation.
+  - Supports marginals: "normal", and "lognormal".
+* Included a vignette 
+
 # copulaStan 0.2.0
 
-## Major changes
+## New Features
 
 * Added functions to fit Clayton copula models.
-* Improved documentation and added vignette for usage examples.
+* Improved documentation 
 
 # copulaStan 0.1.0
 
