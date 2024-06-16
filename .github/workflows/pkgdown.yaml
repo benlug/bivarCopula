@@ -37,11 +37,18 @@ jobs:
       - name: Install remotes
         run: Rscript -e "install.packages('remotes')"
 
+      - name: Debug NAMESPACE and DESCRIPTION
+        run: |
+          cat NAMESPACE
+          cat DESCRIPTION
+          ls -la R/
+
       - name: Install package
         run: Rscript -e "remotes::install_local('.')"
 
       - name: Build site
         run: Rscript -e "pkgdown::build_site()"
+        shell: Rscript {0}
 
       - name: Deploy to GitHub pages 🚀
         if: github.event_name != 'pull_request'
