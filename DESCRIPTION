@@ -7,7 +7,8 @@ Description: Provides Stan wrapper functions to fit bivariate Gaussian and Clayt
 Depends: 
     R (>= 3.5.0)
 Imports: 
-    rstan
+    rstan,
+    copula
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -15,7 +16,8 @@ RoxygenNote: 7.3.1
 Suggests: 
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    pkgdown
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://benlug.github.io/copulaStan/
