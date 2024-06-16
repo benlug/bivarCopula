@@ -36,6 +36,9 @@ jobs:
         with:
           extra-packages: any::pkgdown
 
+      - name: Install remotes
+        run: Rscript -e "install.packages('remotes')"
+
       - name: Install package
         run: Rscript -e "remotes::install_local('.')"
 
