@@ -24,7 +24,8 @@ true_rho <- 0.5
 cop <- normalCopula(param = true_rho, dim = 2)
 U <- rCopula(1000, cop)
 
-fit <- fit_bivariate_copula(U, copula = "gaussian", marginals = c("normal", "normal"), seed = 123)
+fit <- fit_bivariate_copula(U, copula = "gaussian", marginals = c("normal", "normal"), 
+                            seed = 123)
 fit
 ```
 
