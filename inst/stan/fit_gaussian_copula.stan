@@ -49,6 +49,6 @@ model {
   }
 
   for (n in 1:N) {
-    target += gaussian_cop_loglik(inv_Phi(x1[n]), inv_Phi(x2[n]), rho);
+    target += gaussian_cop_loglik(x1[n], x2[n], rho);
   }
 }

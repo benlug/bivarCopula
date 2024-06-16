@@ -1,35 +1,54 @@
 functions {
-  real clayton_copula_log_density(real u, real v, real theta) {
-    real log_c = log1p(theta);
-    real term1 = (-theta - 1) * (log(u) + log(v));
-    real term2 = -(2 * theta + 1) / theta * log(pow(u, -theta) + pow(v, -theta) - 1);
-
-    return log_c + term1 + term2;
-  }
+  #include clayton_cop_loglik.stan
 }
 
 data {
   int<lower=0> N;                  // number of observations
-  vector<lower=0, upper=1>[N] x1;  // variable 1
-  vector<lower=0, upper=1>[N] x2;  // variable 2
+  vector[N] y1;                    // variable 1
+  vector[N] y2;                    // variable 2
+  int<lower=1, upper=2> dist1;     // distribution type for variable 1
+  int<lower=1, upper=2> dist2;     // distribution type for variable 2
 }
 
 parameters {
+  real mu[2];
+  real<lower=0> sigma[2];
   real<lower=0> theta;  // dependence parameter theta for the Clayton copula
 }
 
 model {
+  vector[N] x1;
+  vector[N] x2;
+
+  sigma ~ cauchy(0, 2);
   theta ~ exponential(1); // prior for theta - lognormal good alternative
 
-  for (n in 1:N) {
-    target += clayton_copula_log_density(x1[n], x2[n], theta);
+  // Marginal distributions
+  if (dist1 == 1) {
+    y1 ~ normal(mu[1], sigma[1]);
+    for (n in 1:N) {
+      x1[n] = normal_cdf(y1[n], mu[1], sigma[1]);
+    }
+  } else if (dist1 == 2) {
+    y1 ~ lognormal(mu[1], sigma[1]);
+    for (n in 1:N) {
+      x1[n] = lognormal_cdf(y1[n], mu[1], sigma[1]);
+    }
   }
-}
 
-generated quantities {
-  matrix[2, 2] Omega;
-  Omega[1, 1] = 1;
-  Omega[1, 2] = 0;
-  Omega[2, 1] = 0;
-  Omega[2, 2] = 1;
+  if (dist2 == 1) {
+    y2 ~ normal(mu[2], sigma[2]);
+    for (n in 1:N) {
+      x2[n] = normal_cdf(y2[n], mu[2], sigma[2]);
+    }
+  } else if (dist2 == 2) {
+    y2 ~ lognormal(mu[2], sigma[2]);
+    for (n in 1:N) {
+      x2[n] = lognormal_cdf(y2[n], mu[2], sigma[2]);
+    }
+  }
+
+  for (n in 1:N) {
+    target += log(clayton_copula_density(x1[n], x2[n], theta));
+  }
 }

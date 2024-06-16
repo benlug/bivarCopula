@@ -1,3 +1,9 @@
+# copulaStan 0.3.1
+
+## New Features
+
+* Unified the copula functions into a single `fit_bivariate_copula` function.
+
 # copulaStan 0.3.0
 
 ## New Features

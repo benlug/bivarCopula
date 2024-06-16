@@ -12,18 +12,13 @@ vignette: >
 
 In this vignette, we demonstrate how to fit bivariate Gaussian copula models using the `copulaStan` package. We provide examples for fitting Gaussian copula models with different types of marginals, including normal, and lognormal distributions.
 
-```{r}
-library(copulaStan)
-library(copula)
-```
-
 ## Example: Gaussian Copula with Normal and Lognormal Marginals
 
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 library(copulaStan)
 library(copula)
 
-seed <- 123
+seed <- 2024
 set.seed(seed)
 true_rho <- 0.5
 n <- 2000  
@@ -34,9 +29,32 @@ cop <- normalCopula(param = true_rho, dim = 2)
 mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
 data <- rMvdc(n, mvdc_copula)
 
-fit <- fit_gaussian_copula(data, marginals = c("normal", "lognormal"), 
-                           iter = 4000, chains = 4, warmup = 2000,
-                           seed = seed, cores = 4)
+fit <- fit_bivariate_copula(data, copula = "gaussian", marginals = c("normal", "lognormal"), 
+                            iter = 4000, chains = 4, warmup = 2000,
+                            seed = seed, cores = 4)
+print(fit$fit)
+```
+
+## Example: Clayton Copula with Normal and Lognormal Marginals
+
+```{r, eval = FALSE}
+library(copulaStan)
+library(copula)
+
+seed <- 2024
+set.seed(seed)
+true_theta <- 2.0
+n <- 2000  
+
+margins <- c("norm", "lnorm")
+params <- list(list(mean = 0.8, sd = 2), list(meanlog = 0, sdlog = 0.8))
+cop <- claytonCopula(param = true_theta, dim = 2)
+mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
+data <- rMvdc(n, mvdc_copula)
+
+fit <- fit_bivariate_copula(data, copula = "clayton", marginals = c("normal", "lognormal"), 
+                            iter = 4000, chains = 4, warmup = 2000,
+                            seed = seed, cores = 4)
 print(fit$fit)
 ```
 
@@ -84,3 +102,57 @@ c(u_1, u_2; \rho) = \frac{1}{\sqrt{1-\rho^2}} \exp\left( -\frac{1}{2(1-\rho^2)}(
 \log c(u_1, u_2; \rho) = -\frac{1}{2} \log(1-\rho^2) + \frac{\rho z_1 z_2 - \rho^2 (z_1^2 + z_2^2)}{2(1-\rho^2)}
 \]
 
+## Derivation of Clayton Copula Log Likelihood
+
+Here is a derivation of the Clayton copula likelihood implemented in this package.
+
+The Clayton copula is defined as:
+\[
+C(u, v; \theta) = \left(u^{-\theta} + v^{-\theta} - 1\right)^{-\frac{1}{\theta}}
+\]
+where \( \theta > 0 \).
+
+The copula density function \(c(u, v; \theta) \) is obtained by differentiating the copula function:
+\[
+c(u, v; \theta) = \frac{\partial^2 C(u, v; \theta)}{\partial u \partial v}
+\]
+
+First, we differentiate \(C(u, v; \theta) \) with respect to \( u \):
+\[
+\frac{\partial C(u, v; \theta)}{\partial u} = \frac{\partial}{\partial u} \left( u^{-\theta} + v^{-\theta} - 1 \right)^{-\frac{1}{\theta}}
+\]
+\[
+= -\frac{1}{\theta} \left( u^{-\theta} + v^{-\theta} - 1 \right)^{-\frac{1}{\theta} - 1} \cdot (-\theta) u^{-\theta - 1}
+\]
+\[
+= u^{-\theta - 1} \left( u^{-\theta} + v^{-\theta} - 1 \right)^{-\frac{1}{\theta} - 1}
+\]
+
+Next, we differentiate the result with respect to \( v \):
+\[
+\frac{\partial^2 C(u, v; \theta)}{\partial u \partial v} = \frac{\partial}{\partial v} \left( u^{-\theta - 1} \left( u^{-\theta} + v^{-\theta} - 1 \right)^{-\frac{1}{\theta} - 1} \right)
+\]
+\[
+= u^{-\theta - 1} \cdot \left( -\frac{1}{\theta} - 1 \right) \left( u^{-\theta} + v^{-\theta} - 1 \right)^{-\frac{1}{\theta} - 2} \cdot (-\theta) v^{-\theta - 1}
+\]
+\[
+= (\theta + 1) u^{-\theta - 1} v^{-\theta - 1} \left( u^{-\theta} + v^{-\theta} - 1 \right)^{-\frac{1}{\theta} - 2}
+\]
+
+Therefore, the Clayton copula density function is:
+\[
+c(u, v; \theta) = (\theta + 1) u^{-\theta - 1} v^{-\theta - 1} \left( u^{-\theta} + v^{-\theta} - 1 \right)^{-\frac{1}{\theta} - 2}
+\]
+
+Taking the natural logarithm, we get the log likelihood:
+\[
+\log c(u, v; \theta) = \log(\theta + 1) + (-\theta - 1) (\log u + \log v) + \left( -\frac{1}{\theta} - 2 \right) \log \left( u^{-\theta} + v^{-\theta} - 1 \right)
+\]
+\[
+= \log(\theta + 1) + (-\theta - 1) (\log u + \log v) - \left( \frac{2\theta + 1}{\theta} \right) \log \left( u^{-\theta} + v^{-\theta} - 1 \right)
+\]
+
+Thus, the log likelihood of the Clayton copula is:
+\[
+\log c(u, v; \theta) = \log(1 + \theta) + (-\theta - 1) (\log u + \log v) - \frac{2\theta + 1}{\theta} \log (u^{-\theta} + v^{-\theta} - 1)
+\]
