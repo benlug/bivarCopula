@@ -38,9 +38,8 @@ jobs:
           needs: website
 
       - name: Build site
-        run: |
-          Rscript -e "pkgdown::build_site()"
-        shell: Rscript {0}
+        run: Rscript -e 'pkgdown::build_site()'
+        shell: bash
 
       - name: Deploy to GitHub pages 🚀
         if: github.event_name != 'pull_request'
