@@ -1,4 +1,23 @@
-url: https://benlug.github.io/copulaStan/
+pkgdown:
+  as_is: true
+  destination: docs
+
+navbar:
+  structure:
+    left: [reference, articles, news]
+  components:
+    articles:
+      - text: "Get started"
+        href: index.html
+      - text: "Reference"
+        href: reference/index.html
+      - text: "Articles"
+        href: articles/index.html
+
+url: https://yourusername.github.io/copulaStan
+
 template:
   bootstrap: 5
-
+  bootswatch: flatly
+  params:
+    bootswatch: flatly
