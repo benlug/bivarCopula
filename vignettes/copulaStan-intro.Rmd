@@ -32,7 +32,7 @@ data <- rMvdc(n, mvdc_copula)
 fit <- fit_bivariate_copula(data, copula = "gaussian", marginals = c("normal", "lognormal"), 
                             iter = 4000, chains = 4, warmup = 2000,
                             seed = seed, cores = 4)
-fit$summary()
+fit
 ```
 
 ## Example: Clayton Copula with Normal and Lognormal Marginals
@@ -55,7 +55,7 @@ data <- rMvdc(n, mvdc_copula)
 fit <- fit_bivariate_copula(data, copula = "clayton", marginals = c("normal", "lognormal"), 
                             iter = 4000, chains = 4, warmup = 2000,
                             seed = seed, cores = 4)
-fit$summary
+fit
 ```
 
 ## Derivation of Gaussian Copula Log Likelihood

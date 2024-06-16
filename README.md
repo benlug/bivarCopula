@@ -2,6 +2,8 @@
 
 The `copulaStan` package provides functions to fit bivariate Gaussian and Clayton copula models using Stan. These models can handle both normal and non-normal marginals. 
 
+# projpred [<img src="inst/figures/copulaStan_hex.png" align="right" height="139" alt="copulaStan Logo"/>](inst/figures/copulaStan_hex.png)
+
 ## Installation
 
 You can install the development version of `copulaStan` from [GitHub](https://github.com/benlug/copulaStan) with:
@@ -31,7 +33,7 @@ U <- rMvdc(n, mvdc_copula)
 
 fit <- fit_bivariate_copula(U, copula = "gaussian", marginals = margins, 
                             seed = 123)
-print(fit$fit)
+fit
 ```
 
 And an example for fitting a bivariate Clayton copula model:
@@ -53,5 +55,5 @@ data <- rMvdc(n, mvdc_copula)
 
 fit <- fit_bivariate_copula(data, copula = "clayton", marginals = margins,
                             seed = seed)
-print(fit$fit)
+fit
 ```
