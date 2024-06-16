@@ -6,13 +6,15 @@ navbar:
   structure:
     left: [reference, articles, news]
   components:
+    reference:
+      text: "Reference"
+      href: reference/index.html
     articles:
-      - text: "Get started"
-        href: index.html
-      - text: "Reference"
-        href: reference/index.html
-      - text: "Articles"
-        href: articles/index.html
+      text: "Articles"
+      href: articles/index.html
+    news:
+      text: "News"
+      href: news/index.html
 
 url: https://yourusername.github.io/copulaStan
 
