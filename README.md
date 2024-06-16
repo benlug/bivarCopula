@@ -21,12 +21,17 @@ library(copulaStan)
 
 set.seed(123)
 true_rho <- 0.5
-cop <- normalCopula(param = true_rho, dim = 2)
-U <- rCopula(1000, cop)
+n <- 1000
 
-fit <- fit_bivariate_copula(U, copula = "gaussian", marginals = c("normal", "normal"), 
+margins <- c("norm", "norm")
+params <- list(list(mean = 0, sd = 1), list(mean = 0, sd = 1))
+cop <- normalCopula(param = true_rho, dim = 2)
+mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
+U <- rMvdc(n, mvdc_copula)
+
+fit <- fit_bivariate_copula(U, copula = "gaussian", marginals = margins, 
                             seed = 123)
-fit
+print(fit$fit)
 ```
 
 And an example for fitting a bivariate Clayton copula model:
@@ -37,15 +42,16 @@ library(copulaStan)
 
 seed <- 2024
 set.seed(seed)
-true_rho <- 0.5
+true_theta <- 2.0
 n <- 2000  
 
 margins <- c("norm", "lnorm")
 params <- list(list(mean = 0.8, sd = 2), list(meanlog = 0, sdlog = 0.8))
-cop <- normalCopula(param = true_rho, dim = 2)
+cop <- claytonCopula(param = true_theta, dim = 2)
 mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
 data <- rMvdc(n, mvdc_copula)
 
-fit <- fit_bivariate_copula(data, copula = "gaussian", marginals = margins,
+fit <- fit_bivariate_copula(data, copula = "clayton", marginals = margins,
                             seed = seed)
+print(fit$fit)
 ```

@@ -18,7 +18,7 @@ fit_bivariate_copula(
 )
 }
 \arguments{
-\item{U}{matrix of observed marginals, with two variables.}
+\item{U}{Data matrix of observed marginals, with two variables.}
 
 \item{copula}{The type of copula to fit. Options are "gaussian" and "clayton".}
 
@@ -39,8 +39,35 @@ fit_bivariate_copula(
 \item{cores}{Number of cores to use for parallel processing. Default is 1.}
 }
 \value{
-A fitted Stan model and extracted parameters.
+A list containing:
+\describe{
+  \item{\code{fit}}{The fitted Stan model object.}
+}
 }
 \description{
-Fit Bivariate Copula Model with Optional Marginal Parameter Estimation
+The `fit_bivariate_copula` function fits a bivariate copula model to data with optional marginal parameter estimation.
+It supports Gaussian and Clayton copulas, and allows for specifying normal or lognormal marginal distributions for each variable.
+This function utilizes Stan for Bayesian inference, offering flexible control over the sampling process.
+}
+\examples{
+\dontrun{
+library(copulaStan)
+library(copula)
+
+seed <- 2024
+set.seed(seed)
+true_rho <- 0.5
+n <- 2000
+
+margins <- c("norm", "lnorm")
+params <- list(list(mean = 0.8, sd = 2), list(meanlog = 0, sdlog = 0.8))
+cop <- normalCopula(param = true_rho, dim = 2)
+mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
+data <- rMvdc(n, mvdc_copula)
+
+fit <- fit_bivariate_copula(data, copula = "gaussian", marginals = c("normal", "lognormal"),
+                            iter = 4000, chains = 4, warmup = 2000,
+                            seed = seed, cores = 4)
+}
+
 }
