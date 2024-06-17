@@ -18,7 +18,8 @@ Suggests:
     testthat (>= 3.0.0),
     pkgdown,
     copula,
-    BH 
+    BH,
+    RcppEigen
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://benlug.github.io/copulaStan/
