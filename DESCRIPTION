@@ -7,8 +7,7 @@ Description: Provides Stan wrapper functions to fit bivariate Gaussian and Clayt
 Depends: 
     R (>= 3.5.0)
 Imports: 
-    rstan,
-    copula
+    rstan
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

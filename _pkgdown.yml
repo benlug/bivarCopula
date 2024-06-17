@@ -1,25 +1,4 @@
-pkgdown:
-  as_is: true
-  destination: docs
-
-navbar:
-  structure:
-    left: [reference, articles, news]
-  components:
-    reference:
-      text: "Reference"
-      href: reference/index.html
-    articles:
-      text: "Articles"
-      href: articles/index.html
-    news:
-      text: "News"
-      href: news/index.html
-
-url: https://yourusername.github.io/copulaStan
-
+url: ~
 template:
   bootstrap: 5
-  bootswatch: flatly
-  params:
-    bootswatch: flatly
+
