@@ -1,4 +1,4 @@
-# copulaStan [<img src="man/figures/copulaStan_hex.png" align="right" height="139" alt="copulaStan Logo"/>](https://github.com/benlug/copulaStan/blob/main/man/figures/copulaStan_hex.png)
+# copulaStan [<img src="man/figures/copulaStan_hex.png" align="right" height="80" alt="copulaStan Logo"/>](https://github.com/benlug/copulaStan/blob/main/man/figures/copulaStan_hex.png)
 
 The `copulaStan` package provides functions to fit bivariate Gaussian and Clayton copula models using Stan. These models can handle both normal and non-normal marginals. 
 
