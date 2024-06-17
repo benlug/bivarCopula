@@ -1,6 +1,5 @@
 ---
 title: "copulaStan: Fitting Bivariate Gaussian and Clayton Copulas"
-author: "Benedikt Lugauer"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{copulaStan: Fitting Bivariate Gaussian and Clayton Copulas}
@@ -14,7 +13,7 @@ In this vignette, we demonstrate how to fit bivariate Gaussian copula models usi
 
 ## Example: Gaussian Copula with Normal and Lognormal Marginals
 
-```{r, eval = FALSE}
+```{r}
 library(copulaStan)
 library(copula)
 
@@ -37,7 +36,7 @@ fit
 
 ## Example: Clayton Copula with Normal and Lognormal Marginals
 
-```{r, eval = FALSE}
+```{r}
 library(copulaStan)
 library(copula)
 
