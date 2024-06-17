@@ -3,5 +3,8 @@ pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
   copulaStan-intro: copulaStan-intro.html
-last_built: 2024-06-17T10:35Z
+last_built: 2024-06-17T10:55Z
+urls:
+  reference: https://benlug.github.io/copulaStan/reference
+  article: https://benlug.github.io/copulaStan/articles
 

@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>https://benlug.github.io/copulaStan/404.html</loc>
   </url>
   <url>
-    <loc>/articles/copulaStan-intro.html</loc>
+    <loc>https://benlug.github.io/copulaStan/articles/copulaStan-intro.html</loc>
   </url>
   <url>
-    <loc>/articles/index.html</loc>
+    <loc>https://benlug.github.io/copulaStan/articles/index.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>https://benlug.github.io/copulaStan/authors.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>https://benlug.github.io/copulaStan/index.html</loc>
   </url>
   <url>
-    <loc>/LICENSE-text.html</loc>
+    <loc>https://benlug.github.io/copulaStan/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>/LICENSE.html</loc>
+    <loc>https://benlug.github.io/copulaStan/LICENSE.html</loc>
   </url>
   <url>
-    <loc>/news/index.html</loc>
+    <loc>https://benlug.github.io/copulaStan/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/fit_bivariate_copula.html</loc>
+    <loc>https://benlug.github.io/copulaStan/reference/fit_bivariate_copula.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>https://benlug.github.io/copulaStan/reference/index.html</loc>
   </url>
 </urlset>
