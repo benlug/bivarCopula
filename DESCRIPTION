@@ -16,7 +16,8 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
-    pkgdown
+    pkgdown,
+    copula
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://benlug.github.io/copulaStan/
