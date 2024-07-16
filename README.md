@@ -29,7 +29,8 @@ cop <- normalCopula(param = true_rho, dim = 2)
 mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
 U <- rMvdc(n, mvdc_copula)
 
-fit <- fit_bivariate_copula(U, copula = "gaussian", marginals = margins, 
+fit <- fit_bivariate_copula(U, 
+                            copula = "gaussian", marginals = margins, 
                             seed = 123)
 fit
 ```
@@ -51,7 +52,8 @@ cop <- claytonCopula(param = true_theta, dim = 2)
 mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
 data <- rMvdc(n, mvdc_copula)
 
-fit <- fit_bivariate_copula(data, copula = "clayton", marginals = margins,
+fit <- fit_bivariate_copula(data, 
+                            copula = "clayton", marginals = margins,
                             seed = seed)
 fit
 ```
