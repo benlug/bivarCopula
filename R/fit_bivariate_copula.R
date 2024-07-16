@@ -2,14 +2,14 @@
 #'
 #' @description
 #' The `fit_bivariate_copula` function fits a bivariate copula model to data with optional marginal parameter estimation.
-#' It supports Gaussian and Clayton copulas, and allows for specifying normal or lognormal marginal distributions for each variable.
-#' This function utilizes Stan for Bayesian inference, offering flexible control over the sampling process.
+#' It supports Gaussian, Clayton, and Joe copulas, and allows for specifying normal, lognormal, exponential, or beta marginal distributions for each variable.
+#' This function utilizes Stan for Bayesian inference.
 #'
 #' @usage
 #' fit_bivariate_copula(
 #'   U,
 #'   copula,
-#'   marginals = NULL,
+#'   marginals,
 #'   iter = 2000,
 #'   chains = 4,
 #'   warmup = 1000,
@@ -20,20 +20,20 @@
 #' )
 #'
 #' @param U Data matrix of observed marginals, with two variables.
-#' @param copula The type of copula to fit. Options are "gaussian" and "clayton".
-#' @param marginals A list specifying the marginal distributions for each variable. Options are "normal" and "lognormal".
+#' @param copula The type of copula to fit. Options are "gaussian", "clayton", and "joe".
+#' @param marginals A list specifying the marginal distributions for each variable. Options are "normal", "lognormal", "exponential", and "beta".
 #' @param iter Number of iterations for each chain. Default is 2000.
 #' @param chains Number of chains. Default is 4.
 #' @param warmup Number of warmup iterations per chain. Default is 1000.
 #' @param thin Thinning rate. Default is 1.
 #' @param seed Random seed. Default is NULL.
-#' @param control A list of parameters to control the sampler's behavior. Default is list(adapt_delta = 0.95, max_treedepth = 10).
+#' @param control A list of parameters to control the sampler's behavior. Default is list(adapt_delta = 0.8, max_treedepth = 10).
 #' @param cores Number of cores to use for parallel processing. Default is 1.
 #'
 #' @return
 #' A list containing:
 #' \describe{
-#'   \item{\code{fit}}{The fitted Stan model object.}
+#'   \item{\code{fit}}{Stan model object.}
 #' }
 #'
 #' @examples
@@ -52,52 +52,67 @@
 #' mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
 #' data <- rMvdc(n, mvdc_copula)
 #'
-#' fit <- fit_bivariate_copula(data, copula = "gaussian", marginals = c("normal", "lognormal"),
-#'                             iter = 4000, chains = 4, warmup = 2000,
-#'                             seed = seed, cores = 4)
+#' fit <- fit_bivariate_copula(data,
+#'                             copula = "gaussian", marginals = c("normal", "lognormal"),
+#'                             seed = seed)
 #' }
 #'
 #' @export
-fit_bivariate_copula <- function(U, copula, marginals = NULL,
+fit_bivariate_copula <- function(U, copula, marginals,
                                  iter = 2000, chains = 4, warmup = 1000, thin = 1,
                                  seed = NULL,
                                  control = list(adapt_delta = 0.8, max_treedepth = 10),
                                  cores = 1) {
   if (!requireNamespace("rstan", quietly = TRUE)) {
-    stop("Package 'rstan' is required but is not installed.")
+    stop("'rstan' is required but is not installed.")
   }
 
   if (ncol(U) != 2) {
-    stop("The data matrix U must have exactly two columns.")
+    stop("matrix U must have exactly two columns.")
   }
 
   N <- nrow(U)
   y1 <- U[, 1]
   y2 <- U[, 2]
 
-  dist_map <- c("normal" = 1, "lognormal" = 2)
+  dist_map <- c("normal" = 1, "lognormal" = 2, "exponential" = 3, "beta" = 4)
   dist1 <- dist_map[marginals[[1]]]
   dist2 <- dist_map[marginals[[2]]]
 
+  copula_map <- c("gaussian" = 1, "clayton" = 2, "joe" = 3)
+  copula_type <- copula_map[copula]
+
   if (is.null(dist1) || is.null(dist2)) {
-    stop("Invalid marginal distribution specified. Use 'normal' or 'lognormal'.")
+    stop("Invalid marginal distribution specified. Use 'normal', 'lognormal', 'exponential', or 'beta'.")
   }
 
-  stan_data <- list(N = N, y1 = y1, y2 = y2, dist1 = dist1, dist2 = dist2)
+  if (is.null(copula_type)) {
+    stop("Invalid copula specified. Use 'gaussian', 'clayton', or 'joe'.")
+  }
 
-  if (copula == "gaussian") {
-    stan_file <- system.file("stan", "fit_gaussian_copula.stan", package = "copulaStan")
+  stan_data <- list(N = N, y1 = y1, y2 = y2, dist1 = dist1, dist2 = dist2, copula_type = copula_type)
 
-    init_function <- function() {
-      init_list <- list(rho = 0, mu = c(0, 0), sigma = c(1, 1))
-      return(init_list)
-    }
-  } else if (copula == "clayton") {
-    stan_file <- system.file("stan", "fit_clayton_copula.stan", package = "copulaStan")
+  stan_file <- system.file("stan", "fit_bivariate_copula.stan", package = "copulaStan")
 
-    init_function <- function() list(theta = 1)
-  } else {
-    stop("Invalid copula specified. Use 'gaussian' or 'clayton'.")
+  if (stan_file == "") {
+    stop("Stan model file not found in the package.")
+  }
+
+  init_function <- function() {
+    list(
+      mu1 = if (dist1 == 1 || dist1 == 2) array(0, 1) else numeric(0),
+      sigma1 = if (dist1 == 1 || dist1 == 2) array(1, 1) else numeric(0),
+      lambda1 = if (dist1 == 3) array(1, 1) else numeric(0),
+      alpha1 = if (dist1 == 4) array(1, 1) else numeric(0),
+      beta1 = if (dist1 == 4) array(1, 1) else numeric(0),
+      mu2 = if (dist2 == 1 || dist2 == 2) array(0, 1) else numeric(0),
+      sigma2 = if (dist2 == 1 || dist2 == 2) array(1, 1) else numeric(0),
+      lambda2 = if (dist2 == 3) array(1, 1) else numeric(0),
+      alpha2 = if (dist2 == 4) array(1, 1) else numeric(0),
+      beta2 = if (dist2 == 4) array(1, 1) else numeric(0),
+      rho = if (copula_type == 1) array(0, 1) else numeric(0),
+      theta = if (copula_type != 1) array(1, 1) else numeric(0)
+    )
   }
 
   options(mc.cores = cores)

@@ -7,7 +7,7 @@
 fit_bivariate_copula(
   U,
   copula,
-  marginals = NULL,
+  marginals,
   iter = 2000,
   chains = 4,
   warmup = 1000,
@@ -20,9 +20,9 @@ fit_bivariate_copula(
 \arguments{
 \item{U}{Data matrix of observed marginals, with two variables.}
 
-\item{copula}{The type of copula to fit. Options are "gaussian" and "clayton".}
+\item{copula}{The type of copula to fit. Options are "gaussian", "clayton", and "joe".}
 
-\item{marginals}{A list specifying the marginal distributions for each variable. Options are "normal" and "lognormal".}
+\item{marginals}{A list specifying the marginal distributions for each variable. Options are "normal", "lognormal", "exponential", and "beta".}
 
 \item{iter}{Number of iterations for each chain. Default is 2000.}
 
@@ -34,20 +34,20 @@ fit_bivariate_copula(
 
 \item{seed}{Random seed. Default is NULL.}
 
-\item{control}{A list of parameters to control the sampler's behavior. Default is list(adapt_delta = 0.95, max_treedepth = 10).}
+\item{control}{A list of parameters to control the sampler's behavior. Default is list(adapt_delta = 0.8, max_treedepth = 10).}
 
 \item{cores}{Number of cores to use for parallel processing. Default is 1.}
 }
 \value{
 A list containing:
 \describe{
-  \item{\code{fit}}{The fitted Stan model object.}
+  \item{\code{fit}}{Stan model object.}
 }
 }
 \description{
 The `fit_bivariate_copula` function fits a bivariate copula model to data with optional marginal parameter estimation.
-It supports Gaussian and Clayton copulas, and allows for specifying normal or lognormal marginal distributions for each variable.
-This function utilizes Stan for Bayesian inference, offering flexible control over the sampling process.
+It supports Gaussian, Clayton, and Joe copulas, and allows for specifying normal, lognormal, exponential, or beta marginal distributions for each variable.
+This function utilizes Stan for Bayesian inference.
 }
 \examples{
 \dontrun{
@@ -65,9 +65,9 @@ cop <- normalCopula(param = true_rho, dim = 2)
 mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
 data <- rMvdc(n, mvdc_copula)
 
-fit <- fit_bivariate_copula(data, copula = "gaussian", marginals = c("normal", "lognormal"),
-                            iter = 4000, chains = 4, warmup = 2000,
-                            seed = seed, cores = 4)
+fit <- fit_bivariate_copula(data,
+                            copula = "gaussian", marginals = c("normal", "lognormal"),
+                            seed = seed)
 }
 
 }

@@ -1,3 +1,14 @@
+# copulaStan 0.4.0
+
+## New Features
+
+* Added support for Exponential and Beta distributions in the fit_bivariate_copula function.
+  * Now supports the following marginals: "normal", "lognormal", "exponential", and "beta".
+
+## Fixes
+
+* Fixed minor bugs related to marginal distribution handling.
+
 # copulaStan 0.3.1
 
 ## New Features
@@ -10,14 +21,14 @@
 
 * Added the `fit_gaussian_copula` function to fit bivariate Gaussian copula models with optional marginal parameter estimation.
   - Supports marginals: "normal", and "lognormal".
-* Included a vignette 
+* Included a vignette.
 
 # copulaStan 0.2.0
 
 ## New Features
 
 * Added functions to fit Clayton copula models.
-* Improved documentation 
+* Improved documentation.
 
 # copulaStan 0.1.0
 
