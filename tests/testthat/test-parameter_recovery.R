@@ -7,6 +7,8 @@
 library(copula)
 
 test_that("Gaussian copula recovers rho", {
+    skip_if_no_cmdstan()
+
     set.seed(42)
     true_rho <- 0.5
     n <- 500
@@ -30,6 +32,8 @@ test_that("Gaussian copula recovers rho", {
 })
 
 test_that("Clayton copula recovers theta", {
+    skip_if_no_cmdstan()
+
     set.seed(42)
     true_theta <- 2.0
     n <- 500
@@ -53,6 +57,8 @@ test_that("Clayton copula recovers theta", {
 })
 
 test_that("Joe copula recovers theta", {
+    skip_if_no_cmdstan()
+
     set.seed(42)
     true_theta <- 3.0
     n <- 500

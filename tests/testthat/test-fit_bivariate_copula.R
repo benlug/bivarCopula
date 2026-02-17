@@ -3,6 +3,8 @@
 library(copula)
 
 test_that("fit_bivariate_copula works with Gaussian copula and normal+lognormal marginals", {
+  skip_if_no_cmdstan()
+
   set.seed(2024)
   n <- 500
   margins <- c("norm", "lnorm")
@@ -33,6 +35,8 @@ test_that("fit_bivariate_copula works with Gaussian copula and normal+lognormal 
 })
 
 test_that("fit_bivariate_copula works with Clayton copula", {
+  skip_if_no_cmdstan()
+
   set.seed(2024)
   n <- 500
   margins <- c("norm", "lnorm")
@@ -52,6 +56,8 @@ test_that("fit_bivariate_copula works with Clayton copula", {
 })
 
 test_that("fit_bivariate_copula works with Joe copula", {
+  skip_if_no_cmdstan()
+
   set.seed(2024)
   n <- 500
   margins <- c("norm", "lnorm")
