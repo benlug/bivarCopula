@@ -1,115 +1,95 @@
 functions {
 
-  // Gaussian Copula Likelihood and Loglikelihood
-
-  real gaussian_copula_density(real u, real v, real rho) {
-    real rho_sq = square(rho);
-    real inv_rho_sq = 1 - rho_sq;
-    real z1 = inv_Phi(u);
-    real z2 = inv_Phi(v);
-    real term1 = 1 / (2 * pi() * sqrt(inv_rho_sq));
-    real term2 = exp(-0.5 * (square(z1) + square(z2) - 2 * rho * z1 * z2) / inv_rho_sq);
-
-    return term1 * term2;
-  }
+  // ---------------------------------------------------------------------------
+  // Gaussian Copula
+  // ---------------------------------------------------------------------------
 
   real gaussian_cop_loglik(real u, real v, real rho) {
     real rho_sq = square(rho);
-    real inv_rho_sq = 1 - square(rho);
+    real one_minus_rho_sq = 1 - rho_sq;
     real z1 = inv_Phi(u);
     real z2 = inv_Phi(v);
-    real term1 = -0.5 * log(inv_rho_sq);
-    real term2 = (rho * z1 * z2 - 0.5 * (square(z1) + square(z2)) * rho_sq) / inv_rho_sq;
 
-    return term1 + term2;
+    return -0.5 * log(one_minus_rho_sq)
+           + (rho * z1 * z2 - 0.5 * rho_sq * (square(z1) + square(z2)))
+             / one_minus_rho_sq;
   }
 
-  // Clayton Copula Likelihood and Loglikelihood
+  // ---------------------------------------------------------------------------
+  // Clayton Copula
+  // ---------------------------------------------------------------------------
 
-  real clayton_copula_log_density(real u, real v, real theta) {
-    real log_c = log(theta + 1);
+  real clayton_cop_loglik(real u, real v, real theta) {
     real log_u = log(u);
     real log_v = log(v);
-    real sum_pow = pow(u, -theta) + pow(v, -theta) - 1;
-    real term1 = (-theta - 1) * (log_u + log_v);
-    real term2 = -((2 * theta + 1) / theta) * log(sum_pow);
+    real S = pow(u, -theta) + pow(v, -theta) - 1;
 
-    return log_c + term1 + term2;
+    return log(theta + 1)
+           + (-theta - 1) * (log_u + log_v)
+           - ((2 * theta + 1) / theta) * log(S);
   }
 
-  real clayton_copula_density(real u, real v, real theta) {
-    real term1 = theta + 1;
-    real term2 = pow(u, -theta - 1);
-    real term3 = pow(v, -theta - 1);
-    real term4 = pow(u, -theta) + pow(v, -theta) - 1;
-    real term5 = pow(term4, -1/theta - 2);
+  // ---------------------------------------------------------------------------
+  // Joe Copula
+  //
+  // CDF:  C(u,v) = 1 - [a + b - a*b]^(1/theta)
+  //       where a = (1-u)^theta, b = (1-v)^theta
+  //
+  // Density (derived by differentiating twice):
+  //   c(u,v) = theta * (1-u)^(theta-1) * (1-v)^(theta-1) * S^(1/theta - 2)
+  //            * [ S + (theta-1)/theta * (1-a)*(1-b) ]
+  //   where S = a + b - a*b
+  //
+  // ---------------------------------------------------------------------------
 
-    return term1 * term2 * term3 * term5;
+  real joe_cop_loglik(real u, real v, real theta) {
+    real a = pow(1 - u, theta);
+    real b = pow(1 - v, theta);
+    real S = a + b - a * b;
+    real bracket = S + (theta - 1) / theta * (1 - a) * (1 - b);
+
+    return log(theta)
+           + (theta - 1) * (log1m(u) + log1m(v))
+           + (1.0 / theta - 2) * log(S)
+           + log(bracket);
   }
 
-  // Joe Copula Likelihood and Loglikelihood
+  // ---------------------------------------------------------------------------
+  // Marginal CDF helpers (with clamping to avoid boundary issues)
+  // ---------------------------------------------------------------------------
 
-  real joe_copula_log_density(real u1, real u2, real theta) {
-    real t1 = -log(1 - u1);
-    real t2 = -log(1 - u2);
-    real l1 = exp(-pow(t1, theta));
-    real l2 = exp(-pow(t2, theta));
-    real l3 = exp(-pow(t1 + t2, theta));
-    return log(theta) - (theta + 1) * (t1 + t2) + (l1 + l2 - l3);
-  }
-
-  // normal disitribution
-
-  real gaussian_marginal_log_lik(vector y, real mu, real sigma) {
-    return normal_lpdf(y | mu, sigma);
-  }
-
-  vector gaussian_marginal_cdf_vec(vector y, real mu, real sigma) {
+  vector normal_cdf_vec(vector y, real mu, real sigma) {
     int N = num_elements(y);
     vector[N] cdf_vals;
     for (n in 1:N) {
-      cdf_vals[n] = normal_cdf(y[n], mu, sigma);
+      cdf_vals[n] = fmin(fmax(normal_cdf(y[n] | mu, sigma), 1e-10), 1 - 1e-10);
     }
     return cdf_vals;
   }
 
-  // lognormal distribution
-
-  real lognormal_marginal_log_lik(vector y, real mu, real sigma) {
-    return lognormal_lpdf(y | mu, sigma);
-  }
-
-  vector lognormal_marginal_cdf_vec(vector y, real mu, real sigma) {
+  vector lognormal_cdf_vec(vector y, real mu, real sigma) {
     int N = num_elements(y);
     vector[N] cdf_vals;
     for (n in 1:N) {
-      cdf_vals[n] = lognormal_cdf(y[n], mu, sigma);
+      cdf_vals[n] = fmin(fmax(lognormal_cdf(y[n] | mu, sigma), 1e-10), 1 - 1e-10);
     }
     return cdf_vals;
   }
 
-  // exponential distribution
-
-  real exponential_marginal_log_lik(vector y, real lambda) {
-    return exponential_lpdf(y | lambda);
-  }
-
-  vector exponential_marginal_cdf_vec(vector y, real lambda) {
+  vector exponential_cdf_vec(vector y, real lambda) {
     int N = num_elements(y);
     vector[N] cdf_vals;
     for (n in 1:N) {
-      cdf_vals[n] = exponential_cdf(y[n], lambda);
+      cdf_vals[n] = fmin(fmax(exponential_cdf(y[n] | lambda), 1e-10), 1 - 1e-10);
     }
     return cdf_vals;
   }
 
-  // beta distribution
-
-  vector beta_marginal_cdf_vec(vector y, real alpha, real beta) {
+  vector beta_cdf_vec(vector y, real alpha, real beta_param) {
     int N = num_elements(y);
     vector[N] cdf_vals;
     for (n in 1:N) {
-      cdf_vals[n] = beta_cdf(y[n], alpha, beta);
+      cdf_vals[n] = fmin(fmax(beta_cdf(y[n] | alpha, beta_param), 1e-10), 1 - 1e-10);
     }
     return cdf_vals;
   }
