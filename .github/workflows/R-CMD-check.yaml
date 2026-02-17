@@ -22,10 +22,20 @@ jobs:
         with:
           use-public-rspm: true
 
+      - name: Add Stan R-universe repo
+        run: |
+          writeLines(
+            'options(repos = c("https://stan-dev.r-universe.dev", getOption("repos")))',
+            file.path(Sys.getenv("R_LIBS_USER"), "..", ".Rprofile.site")
+          )
+          cat('ADDITIONAL_REPOSITORIES=https://stan-dev.r-universe.dev', file = Sys.getenv("GITHUB_ENV"), sep = "\n", append = TRUE)
+        shell: Rscript {0}
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck, stan-dev/cmdstanr
+          extra-packages: any::rcmdcheck, any::cmdstanr
           needs: check
+          pak-version: devel
 
       - name: Install CmdStan
         run: |
