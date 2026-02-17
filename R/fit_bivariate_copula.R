@@ -4,7 +4,7 @@
 #' Fits a bivariate copula model to data with marginal parameter estimation.
 #' Supports Gaussian, Clayton, and Joe copulas with normal, lognormal,
 #' exponential, or beta marginal distributions. Uses CmdStan for Bayesian
-#' inference via the `cmdstanr` and `instantiate` packages.
+#' inference via the `cmdstanr` package.
 #'
 #' @param U A numeric matrix with exactly two columns containing the observed
 #'   data. Each column corresponds to one variable.

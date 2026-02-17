@@ -2,7 +2,7 @@
 
 ## Breaking Changes
 
-* Migrated from `rstan` to `cmdstanr` + `instantiate` for Stan model compilation
+* Migrated from `rstan` to `cmdstanr` for Stan model compilation
   and sampling. This requires `cmdstanr` and CmdStan to be installed.
 * The return type of `fit_bivariate_copula()` is now a `copula_fit` S3 object
   (previously returned a raw `stanfit` S4 object).
@@ -45,7 +45,7 @@
 
 ## Dependencies
 
-* Added: `cmdstanr`, `instantiate`, `posterior`, `cli`, `rlang`
+* Added: `cmdstanr`, `posterior`, `cli`, `rlang`
 * Removed: `rstan`, `BH`, `RcppEigen`
 
 # copulaStan 0.4.0

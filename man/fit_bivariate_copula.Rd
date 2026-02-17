@@ -2,72 +2,89 @@
 % Please edit documentation in R/fit_bivariate_copula.R
 \name{fit_bivariate_copula}
 \alias{fit_bivariate_copula}
-\title{Fit Bivariate Copula Model with Optional Marginal Parameter Estimation}
+\title{Fit Bivariate Copula Model}
 \usage{
 fit_bivariate_copula(
   U,
   copula,
   marginals,
-  iter = 2000,
+  iter = 1000,
   chains = 4,
   warmup = 1000,
   thin = 1,
   seed = NULL,
-  control = list(adapt_delta = 0.8, max_treedepth = 10),
-  cores = 1
+  adapt_delta = 0.8,
+  max_treedepth = 10,
+  parallel_chains = 1,
+  refresh = 500
 )
 }
 \arguments{
-\item{U}{Data matrix of observed marginals, with two variables.}
+\item{U}{A numeric matrix with exactly two columns containing the observed
+data. Each column corresponds to one variable.}
 
-\item{copula}{The type of copula to fit. Options are "gaussian", "clayton", and "joe".}
+\item{copula}{Character string specifying the copula type. One of
+\code{"gaussian"}, \code{"clayton"}, or \code{"joe"}.}
 
-\item{marginals}{A list specifying the marginal distributions for each variable. Options are "normal", "lognormal", "exponential", and "beta".}
+\item{marginals}{A character vector of length 2 specifying the marginal
+distributions. Each element must be one of \code{"normal"}, \code{"lognormal"},
+\code{"exponential"}, or \code{"beta"}.}
 
-\item{iter}{Number of iterations for each chain. Default is 2000.}
+\item{iter}{Number of sampling iterations per chain (after warmup).
+Default is 1000.}
 
-\item{chains}{Number of chains. Default is 4.}
+\item{chains}{Number of MCMC chains. Default is 4.}
 
 \item{warmup}{Number of warmup iterations per chain. Default is 1000.}
 
 \item{thin}{Thinning rate. Default is 1.}
 
-\item{seed}{Random seed. Default is NULL.}
+\item{seed}{Random seed for reproducibility. Default is \code{NULL}.}
 
-\item{control}{A list of parameters to control the sampler's behavior. Default is list(adapt_delta = 0.8, max_treedepth = 10).}
+\item{adapt_delta}{Target acceptance rate for NUTS. Default is 0.8.}
 
-\item{cores}{Number of cores to use for parallel processing. Default is 1.}
+\item{max_treedepth}{Maximum tree depth for NUTS. Default is 10.}
+
+\item{parallel_chains}{Number of chains to run in parallel. Default is 1.}
+
+\item{refresh}{How often to print progress (in iterations). Set to 0 for
+silent. Default is 500.}
 }
 \value{
-A list containing:
+A \code{copula_fit} object (S3 class) containing:
 \describe{
-  \item{\code{fit}}{Stan model object.}
+\item{\code{fit}}{The CmdStanMCMC fit object from \code{cmdstanr}.}
+\item{\code{copula}}{The copula type used.}
+\item{\code{marginals}}{The marginal distributions used.}
+\item{\code{data_dim}}{Dimensions of the input data (rows, columns).}
 }
 }
 \description{
-The `fit_bivariate_copula` function fits a bivariate copula model to data with optional marginal parameter estimation.
-It supports Gaussian, Clayton, and Joe copulas, and allows for specifying normal, lognormal, exponential, or beta marginal distributions for each variable.
-This function utilizes Stan for Bayesian inference.
+Fits a bivariate copula model to data with marginal parameter estimation.
+Supports Gaussian, Clayton, and Joe copulas with normal, lognormal,
+exponential, or beta marginal distributions. Uses CmdStan for Bayesian
+inference via the \code{cmdstanr} package.
 }
 \examples{
 \dontrun{
-library(copulaStan)
 library(copula)
+library(copulaStan)
 
-seed <- 2024
-set.seed(seed)
-true_rho <- 0.5
-n <- 2000
-
+set.seed(2024)
+n <- 1000
+cop <- normalCopula(param = 0.5, dim = 2)
 margins <- c("norm", "lnorm")
 params <- list(list(mean = 0.8, sd = 2), list(meanlog = 0, sdlog = 0.8))
-cop <- normalCopula(param = true_rho, dim = 2)
 mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
 data <- rMvdc(n, mvdc_copula)
 
 fit <- fit_bivariate_copula(data,
-                            copula = "gaussian", marginals = c("normal", "lognormal"),
-                            seed = seed)
+  copula = "gaussian",
+  marginals = c("normal", "lognormal"),
+  seed = 2024
+)
+print(fit)
+summary(fit)
 }
 
 }
