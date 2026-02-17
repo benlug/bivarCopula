@@ -7,6 +7,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r setup, include = FALSE}
+# Stan models require CmdStan; don't evaluate during R CMD check
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
 # Introduction
 
 This vignette demonstrates how to fit bivariate copula models using the
