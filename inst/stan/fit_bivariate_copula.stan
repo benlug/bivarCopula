@@ -57,32 +57,32 @@ model {
   // Marginal priors for y1
   if (dist1 == 1 || dist1 == 2) {
     mu1 ~ normal(0, 5);
-    sigma1 ~ normal(0, 2.5);
+    sigma1 ~ lognormal(0, 1);      // positive-constrained: median=1, wide
   } else if (dist1 == 3) {
-    lambda1 ~ normal(0, 2.5);
+    lambda1 ~ lognormal(0, 1);     // positive-constrained: median=1, wide
   } else if (dist1 == 4) {
     alpha1 ~ gamma(2, 0.5);
     beta1 ~ gamma(2, 0.5);
   }
-  
+
   // Marginal priors for y2
   if (dist2 == 1 || dist2 == 2) {
     mu2 ~ normal(0, 5);
-    sigma2 ~ normal(0, 2.5);
+    sigma2 ~ lognormal(0, 1);      // positive-constrained: median=1, wide
   } else if (dist2 == 3) {
-    lambda2 ~ normal(0, 2.5);
+    lambda2 ~ lognormal(0, 1);     // positive-constrained: median=1, wide
   } else if (dist2 == 4) {
     alpha2 ~ gamma(2, 0.5);
     beta2 ~ gamma(2, 0.5);
   }
-  
+
   // Copula priors
   if (copula_type == 1) {
     rho ~ uniform(-1, 1);
   } else if (copula_type == 2) {
-    theta_clayton ~ normal(0, 2.5);
+    theta_clayton ~ lognormal(0, 1);   // positive-constrained: median=1
   } else if (copula_type == 3) {
-    theta_joe ~ normal(2, 2);
+    theta_joe ~ lognormal(log(2), 0.5); // lower-bounded at 1: median=2
   }
   
   // --- Marginal likelihoods ---

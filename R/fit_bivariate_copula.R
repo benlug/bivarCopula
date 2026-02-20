@@ -63,17 +63,16 @@ fit_bivariate_copula <- function(U, copula, marginals,
                                  parallel_chains = 1, refresh = 500) {
   # --- Input validation ---
   validate_inputs(U, copula, marginals)
+  validate_mcmc_params(iter, chains, warmup, thin, seed, adapt_delta,
+                       max_treedepth, parallel_chains, refresh)
 
   N <- nrow(U)
   y1 <- U[, 1]
   y2 <- U[, 2]
 
-  dist_map <- c("normal" = 1L, "lognormal" = 2L, "exponential" = 3L, "beta" = 4L)
-  copula_map <- c("gaussian" = 1L, "clayton" = 2L, "joe" = 3L)
-
-  dist1 <- dist_map[marginals[1]]
-  dist2 <- dist_map[marginals[2]]
-  copula_type <- copula_map[copula]
+  dist1 <- .dist_map[marginals[1]]
+  dist2 <- .dist_map[marginals[2]]
+  copula_type <- .copula_map[copula]
 
   stan_data <- list(
     N = N,
@@ -119,18 +118,31 @@ fit_bivariate_copula <- function(U, copula, marginals,
   }
 
   # --- Sample ---
-  fit <- model$sample(
-    data = stan_data,
-    iter_sampling = iter,
-    iter_warmup = warmup,
-    chains = chains,
-    thin = thin,
-    seed = seed,
-    adapt_delta = adapt_delta,
-    max_treedepth = max_treedepth,
-    parallel_chains = parallel_chains,
-    refresh = refresh,
-    init = init_fn
+  fit <- tryCatch(
+    model$sample(
+      data = stan_data,
+      iter_sampling = iter,
+      iter_warmup = warmup,
+      chains = chains,
+      thin = thin,
+      seed = seed,
+      adapt_delta = adapt_delta,
+      max_treedepth = max_treedepth,
+      parallel_chains = parallel_chains,
+      refresh = refresh,
+      init = init_fn
+    ),
+    error = function(e) {
+      cli::cli_abort(
+        c(
+          "Stan sampling failed.",
+          "i" = "Try increasing {.arg iter} or {.arg warmup}.",
+          "i" = "Try increasing {.arg adapt_delta} (e.g. 0.95 or 0.99).",
+          "i" = "Check that your data is compatible with the chosen marginals.",
+          "x" = "Original error: {conditionMessage(e)}"
+        )
+      )
+    }
   )
 
   # --- Build S3 result ---
@@ -162,6 +174,16 @@ validate_inputs <- function(U, copula, marginals) {
 
   if (any(!is.finite(U))) {
     cli::cli_abort("{.arg U} must not contain NA, NaN, or Inf values.")
+  }
+
+  if (nrow(U) < 2) {
+    cli::cli_abort("{.arg U} must have at least 2 observations, not {nrow(U)}.")
+  }
+
+  for (i in 1:2) {
+    if (stats::var(U[, i]) < .Machine$double.eps) {
+      cli::cli_abort("Column {i} of {.arg U} has near-zero variance. Each column must have meaningful variation.")
+    }
   }
 
   # Check copula
@@ -207,6 +229,47 @@ validate_inputs <- function(U, copula, marginals) {
     cli::cli_abort(
       "All values in column 2 of {.arg U} must be in (0, 1) for beta marginals."
     )
+  }
+
+  invisible(TRUE)
+}
+
+
+# --- MCMC parameter validation (internal) ---
+
+validate_mcmc_params <- function(iter, chains, warmup, thin, seed,
+                                 adapt_delta, max_treedepth, parallel_chains,
+                                 refresh) {
+  if (!is.numeric(iter) || length(iter) != 1 || iter < 1) {
+    cli::cli_abort("{.arg iter} must be a positive integer, not {.val {iter}}.")
+  }
+  if (!is.numeric(chains) || length(chains) != 1 || chains < 1) {
+    cli::cli_abort("{.arg chains} must be a positive integer, not {.val {chains}}.")
+  }
+  if (!is.numeric(warmup) || length(warmup) != 1 || warmup < 0) {
+    cli::cli_abort("{.arg warmup} must be a non-negative integer, not {.val {warmup}}.")
+  }
+  if (!is.numeric(thin) || length(thin) != 1 || thin < 1) {
+    cli::cli_abort("{.arg thin} must be a positive integer, not {.val {thin}}.")
+  }
+  if (!is.null(seed) && (!is.numeric(seed) || length(seed) != 1)) {
+    cli::cli_abort("{.arg seed} must be a single numeric value or NULL.")
+  }
+  if (!is.numeric(adapt_delta) || length(adapt_delta) != 1 ||
+      adapt_delta <= 0 || adapt_delta >= 1) {
+    cli::cli_abort("{.arg adapt_delta} must be between 0 and 1 (exclusive), not {.val {adapt_delta}}.")
+  }
+  if (!is.numeric(max_treedepth) || length(max_treedepth) != 1 || max_treedepth < 1) {
+    cli::cli_abort("{.arg max_treedepth} must be a positive integer, not {.val {max_treedepth}}.")
+  }
+  if (!is.numeric(parallel_chains) || length(parallel_chains) != 1 || parallel_chains < 1) {
+    cli::cli_abort("{.arg parallel_chains} must be a positive integer, not {.val {parallel_chains}}.")
+  }
+  if (parallel_chains > chains) {
+    cli::cli_abort("{.arg parallel_chains} ({parallel_chains}) must not exceed {.arg chains} ({chains}).")
+  }
+  if (!is.numeric(refresh) || length(refresh) != 1 || refresh < 0) {
+    cli::cli_abort("{.arg refresh} must be a non-negative integer, not {.val {refresh}}.")
   }
 
   invisible(TRUE)

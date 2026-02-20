@@ -45,8 +45,8 @@ functions {
   real joe_cop_loglik(real u, real v, real theta) {
     real a = pow(1 - u, theta);
     real b = pow(1 - v, theta);
-    real S = a + b - a * b;
-    real bracket = S + (theta - 1) / theta * (1 - a) * (1 - b);
+    real S = fmax(a + b - a * b, 1e-15);  // guard against underflow when u,v near 1
+    real bracket = fmax(S + (theta - 1) / theta * (1 - a) * (1 - b), 1e-15);
 
     return log(theta)
            + (theta - 1) * (log1m(u) + log1m(v))
@@ -55,7 +55,15 @@ functions {
   }
 
   // ---------------------------------------------------------------------------
-  // Marginal CDF helpers (with clamping to avoid boundary issues)
+  // Marginal CDF helpers
+  //
+  // CDF values are clamped to [1e-10, 1 - 1e-10] to prevent numerical issues
+  // in copula log-likelihoods. Without clamping, CDF values at 0 or 1 cause:
+  //   - Gaussian copula: inv_Phi(0) = -Inf, inv_Phi(1) = +Inf
+  //   - Clayton copula: log(0) = -Inf, pow(0, -theta) = Inf
+  //   - Joe copula: log(0) = -Inf
+  // The 1e-10 tolerance is small enough to have negligible impact on inference
+  // while preventing NaN/Inf propagation in the log-likelihood.
   // ---------------------------------------------------------------------------
 
   vector normal_cdf_vec(vector y, real mu, real sigma) {

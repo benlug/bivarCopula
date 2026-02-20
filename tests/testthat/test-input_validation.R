@@ -81,3 +81,38 @@ test_that("rejects out-of-range values for beta marginals", {
         "must be in"
     )
 })
+
+test_that("rejects matrix with fewer than 2 observations", {
+    U <- matrix(c(1, 2), ncol = 2)
+    expect_error(
+        fit_bivariate_copula(U, copula = "gaussian", marginals = c("normal", "normal")),
+        "at least 2 observations"
+    )
+})
+
+test_that("rejects matrix with zero-variance column", {
+    U <- matrix(c(5, 5, 5, 5, 1, 2, 3, 4), ncol = 2)
+    expect_error(
+        fit_bivariate_copula(U, copula = "gaussian", marginals = c("normal", "normal")),
+        "near-zero variance"
+    )
+})
+
+test_that("rejects invalid MCMC parameters", {
+    U <- matrix(rnorm(20), ncol = 2)
+    expect_error(
+        fit_bivariate_copula(U, copula = "gaussian", marginals = c("normal", "normal"),
+                             iter = -1),
+        "iter"
+    )
+    expect_error(
+        fit_bivariate_copula(U, copula = "gaussian", marginals = c("normal", "normal"),
+                             adapt_delta = 1.5),
+        "adapt_delta"
+    )
+    expect_error(
+        fit_bivariate_copula(U, copula = "gaussian", marginals = c("normal", "normal"),
+                             parallel_chains = 10, chains = 4),
+        "parallel_chains"
+    )
+})

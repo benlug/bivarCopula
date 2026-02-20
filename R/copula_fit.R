@@ -28,6 +28,10 @@ copula_fit <- function(fit, copula, marginals, data_dim) {
 #' @return Invisibly returns `x`.
 #' @export
 print.copula_fit <- function(x, ...) {
+    if (!requireNamespace("posterior", quietly = TRUE)) {
+        cli::cli_abort("The {.pkg posterior} package is required. Install with: {.code install.packages(\"posterior\")}")
+    }
+
     cli::cli_h1("Bivariate Copula Fit")
     cli::cli_text("Copula: {.strong {x$copula}}")
     cli::cli_text("Marginals: {.val {x$marginals[1]}}, {.val {x$marginals[2]}}")
@@ -52,6 +56,10 @@ print.copula_fit <- function(x, ...) {
 #' @return A tibble of parameter summaries from `posterior::summarise_draws()`.
 #' @export
 summary.copula_fit <- function(object, ...) {
+    if (!requireNamespace("posterior", quietly = TRUE)) {
+        cli::cli_abort("The {.pkg posterior} package is required. Install with: {.code install.packages(\"posterior\")}")
+    }
+
     draws <- posterior::as_draws_df(object$fit$draws())
     pars <- copula_pars(object)
     sub <- posterior::subset_draws(draws, variable = pars)
@@ -67,6 +75,10 @@ summary.copula_fit <- function(object, ...) {
 #' @return A named numeric vector of posterior means.
 #' @export
 coef.copula_fit <- function(object, ...) {
+    if (!requireNamespace("posterior", quietly = TRUE)) {
+        cli::cli_abort("The {.pkg posterior} package is required. Install with: {.code install.packages(\"posterior\")}")
+    }
+
     draws <- posterior::as_draws_df(object$fit$draws())
     pars <- copula_pars(object)
     sub <- posterior::subset_draws(draws, variable = pars)
@@ -78,12 +90,9 @@ coef.copula_fit <- function(object, ...) {
 # --- Internal helper to determine relevant parameter names ---
 
 copula_pars <- function(x) {
-    dist_map <- c("normal" = 1L, "lognormal" = 2L, "exponential" = 3L, "beta" = 4L)
-    copula_map <- c("gaussian" = 1L, "clayton" = 2L, "joe" = 3L)
-
-    d1 <- dist_map[x$marginals[1]]
-    d2 <- dist_map[x$marginals[2]]
-    ct <- copula_map[x$copula]
+    d1 <- .dist_map[x$marginals[1]]
+    d2 <- .dist_map[x$marginals[2]]
+    ct <- .copula_map[x$copula]
 
     pars <- character(0)
 
