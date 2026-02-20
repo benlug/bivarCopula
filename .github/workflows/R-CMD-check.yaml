@@ -27,9 +27,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libtbb-dev
 
+      - name: Add Stan repository to R profile
+        run: |
+          cat('options(repos = c("https://stan-dev.r-universe.dev", getOption("repos")))\n',
+              file = "~/.Rprofile", append = TRUE)
+        shell: Rscript {0}
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck, stan-dev/cmdstanr
+          extra-packages: any::rcmdcheck
           needs: check
 
       - name: Install CmdStan
