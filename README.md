@@ -2,46 +2,61 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/benlug/copulaStan/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/benlug/copulaStan/actions/workflows/R-CMD-check.yaml)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-## Overview
+**copulaStan** fits bivariate copula models with full Bayesian inference via [Stan](https://mc-stan.org/). It jointly estimates the copula dependence parameter and marginal distribution parameters, returning posterior draws for uncertainty quantification and model comparison.
 
-Copulas are functions that describe the dependence structure between random variables, separately from their marginal distributions. This separation makes them a flexible tool for modeling multivariate data with non-standard dependencies.
+## Why copulaStan?
 
-`copulaStan` fits bivariate copula models with full Bayesian inference via [Stan](https://mc-stan.org/). It jointly estimates the copula dependence parameter and marginal distribution parameters, returning posterior draws for uncertainty quantification and model comparison.
+Copulas separate the modeling of marginal distributions from the modeling of dependence. This lets you choose the best-fitting distribution for each variable independently, then capture how the variables relate through a copula function -- without restrictive joint distribution assumptions.
+
+**copulaStan** makes this approach accessible in R with:
+
+- **Full Bayesian inference** -- posterior distributions for all parameters, not just point estimates
+- **Flexible marginals** -- mix and match Normal, Lognormal, Exponential, and Beta distributions
+- **Multiple copula families** -- Gaussian, Clayton, and Joe copulas for different dependence structures
+- **Built-in diagnostics** -- Rhat, ESS, and pointwise log-likelihoods for LOO-CV model comparison
+- **Modern Stan backend** -- powered by CmdStan via cmdstanr for fast, reliable sampling
 
 ## Supported Models
 
-| Copula     | Dependence parameter | Dependence structure         |
-|------------|----------------------|------------------------------|
-| Gaussian   | `rho` in (-1, 1)    | Symmetric, no tail dependence |
-| Clayton    | `theta` > 0         | Lower tail dependence        |
-| Joe        | `theta` >= 1        | Upper tail dependence        |
+### Copula Families
 
-Each marginal can be independently set to one of:
+| Copula     | Parameter | Constraint | Dependence Structure         |
+|------------|-----------|------------|------------------------------|
+| Gaussian   | `rho`     | (-1, 1)    | Symmetric, no tail dependence |
+| Clayton    | `theta`   | > 0        | Lower tail dependence        |
+| Joe        | `theta`   | >= 1       | Upper tail dependence        |
 
-- **Normal** -- parameters: `mu`, `sigma`
-- **Lognormal** -- parameters: `mu`, `sigma` (data must be positive)
-- **Exponential** -- parameter: `lambda` (data must be positive)
-- **Beta** -- parameters: `alpha`, `beta` (data must be in (0, 1))
+### Marginal Distributions
+
+| Distribution | Parameters        | Data Constraint         |
+|--------------|-------------------|-------------------------|
+| Normal       | `mu`, `sigma`     | --                      |
+| Lognormal    | `mu`, `sigma`     | Data must be positive   |
+| Exponential  | `lambda`          | Data must be positive   |
+| Beta         | `alpha`, `beta`   | Data must be in (0, 1)  |
+
+Each marginal can be set independently, giving 4 x 4 = 16 possible marginal combinations per copula family.
 
 ## Installation
 
-`copulaStan` requires [CmdStan](https://mc-stan.org/cmdstanr/). Install it first if you have not already:
+**copulaStan** requires [CmdStan](https://mc-stan.org/cmdstanr/). Install it first if you have not already:
 
 ```r
 install.packages("cmdstanr", repos = c("https://stan-dev.r-universe.dev", getOption("repos")))
 cmdstanr::install_cmdstan()
 ```
 
-Then install `copulaStan` from GitHub:
+Then install **copulaStan** from GitHub:
 
 ```r
 # install.packages("devtools")
 devtools::install_github("benlug/copulaStan")
 ```
 
-## Example
+## Quick Start
 
 Simulate data from a Gaussian copula with normal and lognormal marginals, then recover the parameters:
 
@@ -83,25 +98,30 @@ coef(fit)
 #>      0.024      1.005      0.014      0.812      0.481
 ```
 
-Fit a Clayton copula instead:
+Try a different copula family:
 
 ```r
-set.seed(123)
-cop <- claytonCopula(param = 2.0, dim = 2)
-mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
-data <- rMvdc(1000, mvdc_copula)
-
-fit <- fit_bivariate_copula(data,
+# Clayton copula for lower tail dependence
+fit_clay <- fit_bivariate_copula(data,
   copula = "clayton",
   marginals = c("normal", "lognormal"),
   seed = 123
 )
-coef(fit)
-#>          mu1[1]       sigma1[1]          mu2[1]       sigma2[1] theta_clayton[1]
-#>           0.006           0.998          -0.001           0.797            2.032
+
+# Compare models via LOO-CV
+library(loo)
+loo_gauss <- loo(fit$fit$draws("log_lik", format = "matrix"))
+loo_clay <- loo(fit_clay$fit$draws("log_lik", format = "matrix"))
+loo_compare(loo_gauss, loo_clay)
 ```
+
+## Learning More
+
+- **[Get Started](https://benlug.github.io/copulaStan/articles/copulaStan-intro.html)** -- a comprehensive introduction with examples for all copula families, diagnostics, and prior specification.
+- **[Function Reference](https://benlug.github.io/copulaStan/reference/index.html)** -- complete documentation for all exported functions and methods.
+- **[Changelog](https://benlug.github.io/copulaStan/news/index.html)** -- version history and release notes.
 
 ## Getting Help
 
-- Browse the [pkgdown site](https://benlug.github.io/copulaStan/) for full documentation and the introductory vignette.
+- Browse the [package website](https://benlug.github.io/copulaStan/) for documentation and vignettes.
 - Report bugs or request features on [GitHub Issues](https://github.com/benlug/copulaStan/issues).

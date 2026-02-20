@@ -1,5 +1,5 @@
 Package: copulaStan
-Title: Fit Bivariate Gaussian and Clayton Copula Models Using Stan
+Title: Fit Bivariate Copula Models Using Stan
 Version: 0.5.0
 Authors@R: 
     person("Benedikt", "Lugauer", email = "benedikt.lugauer@pm.me", role = c("aut", "cre"))
