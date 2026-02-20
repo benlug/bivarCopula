@@ -21,17 +21,12 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
+          extra-repositories: "https://stan-dev.r-universe.dev"
 
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libtbb-dev
-
-      - name: Add Stan repository to R profile
-        run: |
-          cat('options(repos = c("https://stan-dev.r-universe.dev", getOption("repos")))\n',
-              file = "~/.Rprofile", append = TRUE)
-        shell: Rscript {0}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
