@@ -1,0 +1,77 @@
+
+R version 4.5.1 (2025-06-13) -- "Great Square Root"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "copulaStan"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> library('copulaStan')
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("fit_bivariate_copula")
+> ### * fit_bivariate_copula
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: fit_bivariate_copula
+> ### Title: Fit Bivariate Copula Model
+> ### Aliases: fit_bivariate_copula
+> 
+> ### ** Examples
+> 
+> ## Not run: 
+> ##D library(copula)
+> ##D library(copulaStan)
+> ##D 
+> ##D set.seed(2024)
+> ##D n <- 1000
+> ##D cop <- normalCopula(param = 0.5, dim = 2)
+> ##D margins <- c("norm", "lnorm")
+> ##D params <- list(list(mean = 0.8, sd = 2), list(meanlog = 0, sdlog = 0.8))
+> ##D mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
+> ##D data <- rMvdc(n, mvdc_copula)
+> ##D 
+> ##D fit <- fit_bivariate_copula(data,
+> ##D   copula = "gaussian",
+> ##D   marginals = c("normal", "lognormal"),
+> ##D   seed = 2024
+> ##D )
+> ##D print(fit)
+> ##D summary(fit)
+> ## End(Not run)
+> 
+> 
+> 
+> 
+> ### * <FOOTER>
+> ###
+> cleanEx()
+> options(digits = 7L)
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  0.058 0 0.102 0 0 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')

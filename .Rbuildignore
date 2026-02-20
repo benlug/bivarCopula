@@ -6,3 +6,4 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+^inst/stan/fit_bivariate_copula$

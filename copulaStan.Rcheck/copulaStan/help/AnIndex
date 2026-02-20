@@ -1,0 +1,6 @@
+coef.copula_fit	coef.copula_fit
+copula_fit	copula_fit
+fit_bivariate_copula	fit_bivariate_copula
+get_stan_model	get_stan_model
+print.copula_fit	print.copula_fit
+summary.copula_fit	summary.copula_fit

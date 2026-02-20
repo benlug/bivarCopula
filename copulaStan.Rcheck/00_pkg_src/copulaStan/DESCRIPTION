@@ -6,23 +6,19 @@ Authors@R:
 Description: Provides Stan wrapper functions to fit bivariate Gaussian, Clayton, and Joe
     copula models with flexible marginal distributions. Models are pre-compiled
     using 'CmdStan' via the 'instantiate' package for fast sampling.
-Depends: 
-    R (>= 4.1.0)
-Imports: 
-    posterior,
-    cli
+Depends: R (>= 4.1.0)
+Imports: posterior, cli, rlang
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-Suggests: 
-    cmdstanr,
-    knitr,
-    rmarkdown,
-    testthat (>= 3.0.0),
-    pkgdown,
-    copula
+Suggests: cmdstanr, knitr, rmarkdown, testthat (>= 3.0.0), pkgdown,
+        copula
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://benlug.github.io/copulaStan/
 Additional_repositories: https://stan-dev.r-universe.dev
+NeedsCompilation: no
+Packaged: 2026-02-20 18:40:13 UTC; benlug
+Author: Benedikt Lugauer [aut, cre]
+Maintainer: Benedikt Lugauer <benedikt.lugauer@pm.me>
