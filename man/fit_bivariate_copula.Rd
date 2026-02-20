@@ -53,10 +53,14 @@ silent. Default is 500.}
 \value{
 A \code{copula_fit} object (S3 class) containing:
 \describe{
-\item{\code{fit}}{The CmdStanMCMC fit object from \code{cmdstanr}.}
-\item{\code{copula}}{The copula type used.}
-\item{\code{marginals}}{The marginal distributions used.}
-\item{\code{data_dim}}{Dimensions of the input data (rows, columns).}
+\item{\code{fit}}{The underlying \code{CmdStanMCMC} object from \code{cmdstanr},
+providing access to raw draws, diagnostics, and the Stan model.}
+\item{\code{copula}}{Character string of the copula type used
+(e.g., \code{"gaussian"}).}
+\item{\code{marginals}}{Character vector of length 2 with the marginal
+distribution names (e.g., \code{c("normal", "lognormal")}).}
+\item{\code{data_dim}}{Integer vector of length 2 giving the dimensions
+of the input data (rows, columns).}
 }
 }
 \description{
@@ -65,6 +69,50 @@ Supports Gaussian, Clayton, and Joe copulas with normal, lognormal,
 exponential, or beta marginal distributions. Uses CmdStan for Bayesian
 inference via the \code{cmdstanr} package.
 }
+\section{Supported Models}{
+
+\strong{Copula types:}
+\describe{
+\item{\code{"gaussian"}}{Gaussian (normal) copula with correlation
+parameter \code{rho} in (-1, 1).}
+\item{\code{"clayton"}}{Clayton copula with dependence parameter
+\code{theta_clayton} > 0. Captures lower-tail dependence.}
+\item{\code{"joe"}}{Joe copula with dependence parameter
+\code{theta_joe} >= 1. Captures upper-tail dependence.}
+}
+
+\strong{Marginal distributions:}
+\describe{
+\item{\code{"normal"}}{Normal distribution with parameters \code{mu}
+(location) and \code{sigma} (scale > 0).}
+\item{\code{"lognormal"}}{Log-normal distribution with parameters \code{mu}
+(log-location) and \code{sigma} (log-scale > 0). Data must be
+positive.}
+\item{\code{"exponential"}}{Exponential distribution with rate parameter
+\code{lambda} > 0. Data must be positive.}
+\item{\code{"beta"}}{Beta distribution with shape parameters \code{alpha} > 0
+and \code{beta} > 0. Data must be in (0, 1).}
+}
+}
+
+\section{Priors}{
+
+The Stan model uses the following weakly informative priors:
+\describe{
+\item{Normal / Log-normal marginals}{\code{mu ~ normal(0, 5)},
+\code{sigma ~ lognormal(0, 1)} (median = 1).}
+\item{Exponential marginals}{\code{lambda ~ lognormal(0, 1)}
+(median = 1).}
+\item{Beta marginals}{\code{alpha ~ gamma(2, 0.5)},
+\code{beta ~ gamma(2, 0.5)}.}
+\item{Gaussian copula}{\code{rho ~ uniform(-1, 1)}.}
+\item{Clayton copula}{\code{theta_clayton ~ lognormal(0, 1)}
+(median = 1).}
+\item{Joe copula}{\code{theta_joe ~ lognormal(log(2), 0.5)}
+(median = 2, lower-bounded at 1).}
+}
+}
+
 \examples{
 \dontrun{
 library(copula)
@@ -74,7 +122,10 @@ set.seed(2024)
 n <- 1000
 cop <- normalCopula(param = 0.5, dim = 2)
 margins <- c("norm", "lnorm")
-params <- list(list(mean = 0.8, sd = 2), list(meanlog = 0, sdlog = 0.8))
+params <- list(
+  list(mean = 0.8, sd = 2),
+  list(meanlog = 0, sdlog = 0.8)
+)
 mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
 data <- rMvdc(n, mvdc_copula)
 
@@ -85,6 +136,11 @@ fit <- fit_bivariate_copula(data,
 )
 print(fit)
 summary(fit)
+coef(fit)
 }
 
+}
+\seealso{
+\code{\link[=print.copula_fit]{print.copula_fit()}}, \code{\link[=summary.copula_fit]{summary.copula_fit()}},
+\code{\link[=coef.copula_fit]{coef.copula_fit()}}
 }

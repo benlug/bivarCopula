@@ -1,12 +1,13 @@
 # tests/testthat/test-parameter_recovery.R
-#
-# These tests verify that the copula models can recover true parameter values
-# within reasonable posterior intervals. They use small samples and short chains
-# for speed, so tolerances are generous.
+# Verify that copula models recover true parameter values within reasonable
+# posterior intervals. Uses small samples and short chains for speed, so
+# tolerances are generous.
 
 library(copula)
 
-test_that("Gaussian copula recovers rho", {
+# --- Gaussian copula ---
+
+test_that("recovers rho for Gaussian copula with normal marginals", {
     skip_if_no_cmdstan()
 
     set.seed(42)
@@ -14,9 +15,10 @@ test_that("Gaussian copula recovers rho", {
     n <- 500
 
     cop <- normalCopula(param = true_rho, dim = 2)
-    margins <- c("norm", "norm")
-    params <- list(list(mean = 0, sd = 1), list(mean = 0, sd = 1))
-    mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
+    mvdc_copula <- mvdc(cop,
+        margins = c("norm", "norm"),
+        paramMargins = list(list(mean = 0, sd = 1), list(mean = 0, sd = 1))
+    )
     data <- rMvdc(n, mvdc_copula)
 
     fit <- fit_bivariate_copula(data,
@@ -31,7 +33,9 @@ test_that("Gaussian copula recovers rho", {
     )
 })
 
-test_that("Clayton copula recovers theta", {
+# --- Clayton copula ---
+
+test_that("recovers theta for Clayton copula with normal marginals", {
     skip_if_no_cmdstan()
 
     set.seed(42)
@@ -39,9 +43,10 @@ test_that("Clayton copula recovers theta", {
     n <- 500
 
     cop <- claytonCopula(param = true_theta, dim = 2)
-    margins <- c("norm", "norm")
-    params <- list(list(mean = 0, sd = 1), list(mean = 0, sd = 1))
-    mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
+    mvdc_copula <- mvdc(cop,
+        margins = c("norm", "norm"),
+        paramMargins = list(list(mean = 0, sd = 1), list(mean = 0, sd = 1))
+    )
     data <- rMvdc(n, mvdc_copula)
 
     fit <- fit_bivariate_copula(data,
@@ -56,7 +61,9 @@ test_that("Clayton copula recovers theta", {
     )
 })
 
-test_that("Joe copula recovers theta", {
+# --- Joe copula ---
+
+test_that("recovers theta for Joe copula with normal marginals", {
     skip_if_no_cmdstan()
 
     set.seed(42)
@@ -64,9 +71,10 @@ test_that("Joe copula recovers theta", {
     n <- 500
 
     cop <- joeCopula(param = true_theta, dim = 2)
-    margins <- c("norm", "norm")
-    params <- list(list(mean = 0, sd = 1), list(mean = 0, sd = 1))
-    mvdc_copula <- mvdc(cop, margins = margins, paramMargins = params)
+    mvdc_copula <- mvdc(cop,
+        margins = c("norm", "norm"),
+        paramMargins = list(list(mean = 0, sd = 1), list(mean = 0, sd = 1))
+    )
     data <- rMvdc(n, mvdc_copula)
 
     fit <- fit_bivariate_copula(data,

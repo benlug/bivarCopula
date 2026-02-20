@@ -22,14 +22,31 @@ copula_fit <- function(fit, copula, marginals, data_dim) {
 
 #' Print a copula_fit object
 #'
+#' Displays a summary of the fitted copula model including the copula type,
+#' marginal distributions, sample size, and a parameter summary table.
+#'
 #' @param x A `copula_fit` object.
 #' @param ... Additional arguments (unused).
 #'
-#' @return Invisibly returns `x`.
+#' @return Invisibly returns the `copula_fit` object `x`, allowing
+#'   usage in pipelines.
+#'
+#' @examples
+#' \dontrun{
+#' fit <- fit_bivariate_copula(data,
+#'   copula = "gaussian",
+#'   marginals = c("normal", "lognormal")
+#' )
+#' print(fit)
+#' }
+#'
 #' @export
 print.copula_fit <- function(x, ...) {
     if (!requireNamespace("posterior", quietly = TRUE)) {
-        cli::cli_abort("The {.pkg posterior} package is required. Install with: {.code install.packages(\"posterior\")}")
+        cli::cli_abort(c(
+            "The {.pkg posterior} package is required.",
+            "i" = "Install with: {.code install.packages(\"posterior\")}"
+        ))
     }
 
     cli::cli_h1("Bivariate Copula Fit")
@@ -50,14 +67,32 @@ print.copula_fit <- function(x, ...) {
 
 #' Summarize a copula_fit object
 #'
+#' Returns a tibble of posterior summaries for the model parameters,
+#' including mean, median, standard deviation, MAD, quantiles, and
+#' convergence diagnostics (Rhat, ESS).
+#'
 #' @param object A `copula_fit` object.
 #' @param ... Additional arguments (unused).
 #'
-#' @return A tibble of parameter summaries from `posterior::summarise_draws()`.
+#' @return A tibble from [posterior::summarise_draws()] with one row
+#'   per parameter and columns for summary statistics and diagnostics.
+#'
+#' @examples
+#' \dontrun{
+#' fit <- fit_bivariate_copula(data,
+#'   copula = "gaussian",
+#'   marginals = c("normal", "lognormal")
+#' )
+#' summary(fit)
+#' }
+#'
 #' @export
 summary.copula_fit <- function(object, ...) {
     if (!requireNamespace("posterior", quietly = TRUE)) {
-        cli::cli_abort("The {.pkg posterior} package is required. Install with: {.code install.packages(\"posterior\")}")
+        cli::cli_abort(c(
+            "The {.pkg posterior} package is required.",
+            "i" = "Install with: {.code install.packages(\"posterior\")}"
+        ))
     }
 
     draws <- posterior::as_draws_df(object$fit$draws())
@@ -69,14 +104,32 @@ summary.copula_fit <- function(object, ...) {
 
 #' Extract point estimates from a copula_fit
 #'
+#' Returns posterior means of the model parameters as a named numeric
+#' vector. Parameter names match those used in the Stan model (e.g.,
+#' `"mu1[1]"`, `"sigma1[1]"`, `"rho[1]"`).
+#'
 #' @param object A `copula_fit` object.
 #' @param ... Additional arguments (unused).
 #'
-#' @return A named numeric vector of posterior means.
+#' @return A named numeric vector of posterior means, with one element
+#'   per model parameter.
+#'
+#' @examples
+#' \dontrun{
+#' fit <- fit_bivariate_copula(data,
+#'   copula = "gaussian",
+#'   marginals = c("normal", "lognormal")
+#' )
+#' coef(fit)
+#' }
+#'
 #' @export
 coef.copula_fit <- function(object, ...) {
     if (!requireNamespace("posterior", quietly = TRUE)) {
-        cli::cli_abort("The {.pkg posterior} package is required. Install with: {.code install.packages(\"posterior\")}")
+        cli::cli_abort(c(
+            "The {.pkg posterior} package is required.",
+            "i" = "Install with: {.code install.packages(\"posterior\")}"
+        ))
     }
 
     draws <- posterior::as_draws_df(object$fit$draws())
@@ -87,8 +140,16 @@ coef.copula_fit <- function(object, ...) {
 }
 
 
-# --- Internal helper to determine relevant parameter names ---
-
+#' Get relevant parameter names for a copula_fit object
+#'
+#' Determines which Stan parameter names are relevant based on the
+#' marginal distributions and copula type stored in a `copula_fit` object.
+#'
+#' @param x A `copula_fit` object.
+#'
+#' @return A character vector of Stan parameter names.
+#' @keywords internal
+#' @noRd
 copula_pars <- function(x) {
     d1 <- .dist_map[x$marginals[1]]
     d2 <- .dist_map[x$marginals[2]]

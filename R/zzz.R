@@ -9,12 +9,14 @@ get_stan_model <- function() {
     }
 
     if (!requireNamespace("cmdstanr", quietly = TRUE)) {
-        cli::cli_abort(
-            "The {.pkg cmdstanr} package is required. Install it with:",
-            body = c(
-                i = '{.code install.packages("cmdstanr", repos = c("https://stan-dev.r-universe.dev", getOption("repos")))}'
-            )
+        install_cmd <- paste0(
+            'install.packages("cmdstanr", ',
+            'repos = c("https://stan-dev.r-universe.dev", getOption("repos")))'
         )
+        cli::cli_abort(c(
+            "The {.pkg cmdstanr} package is required.",
+            "i" = "Install with: {.code {install_cmd}}"
+        ))
     }
 
     stan_file <- system.file("stan", "fit_bivariate_copula.stan",

@@ -12,8 +12,21 @@
 \item{...}{Additional arguments (unused).}
 }
 \value{
-A named numeric vector of posterior means.
+A named numeric vector of posterior means, with one element
+per model parameter.
 }
 \description{
-Extract point estimates from a copula_fit
+Returns posterior means of the model parameters as a named numeric
+vector. Parameter names match those used in the Stan model (e.g.,
+\code{"mu1[1]"}, \code{"sigma1[1]"}, \code{"rho[1]"}).
+}
+\examples{
+\dontrun{
+fit <- fit_bivariate_copula(data,
+  copula = "gaussian",
+  marginals = c("normal", "lognormal")
+)
+coef(fit)
+}
+
 }

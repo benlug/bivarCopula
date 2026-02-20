@@ -1,4 +1,24 @@
+// fit_bivariate_copula.stan
+// Bivariate copula model: estimates marginal distribution parameters and a
+// copula dependence parameter jointly via maximum likelihood with priors.
+
 #include likelihood_functions.stan
+
+// ---------------------------------------------------------------------------
+// Data: observed bivariate sample and integer codes selecting the marginal
+// distributions and copula family.
+//
+// Distribution codes (dist1, dist2):
+//   1 = Normal(mu, sigma)
+//   2 = Log-Normal(mu, sigma)
+//   3 = Exponential(lambda)
+//   4 = Beta(alpha, beta)
+//
+// Copula codes (copula_type):
+//   1 = Gaussian copula  (dependence parameter: rho)
+//   2 = Clayton copula   (dependence parameter: theta_clayton)
+//   3 = Joe copula       (dependence parameter: theta_joe)
+// ---------------------------------------------------------------------------
 data {
   int<lower=1> N; // number of observations
   vector[N] y1; // variable 1
@@ -7,6 +27,13 @@ data {
   int<lower=1, upper=4> dist2; // distribution for y2: 1=normal, 2=lognormal, 3=exponential, 4=beta
   int<lower=1, upper=3> copula_type; // copula: 1=gaussian, 2=clayton, 3=joe
 }
+
+// ---------------------------------------------------------------------------
+// Parameters: conditional declarations via size-zero arrays.
+// Each parameter is declared as a size-1 array only when its corresponding
+// distribution or copula is active (otherwise size-0, effectively absent).
+// This avoids sampling unused parameters.
+// ---------------------------------------------------------------------------
 parameters {
   // Marginal parameters for y1
   array[dist1 == 1 || dist1 == 2 ? 1 : 0] real mu1;
@@ -27,8 +54,17 @@ parameters {
   array[copula_type == 2 ? 1 : 0] real<lower=0> theta_clayton; // Clayton copula
   array[copula_type == 3 ? 1 : 0] real<lower=1> theta_joe; // Joe copula (theta >= 1)
 }
+
+// ---------------------------------------------------------------------------
+// Model: three stages.
+//   1. CDF transform -- compute probability integral transforms (PITs) of
+//      the observed data using the marginal CDFs, yielding pseudo-uniform
+//      values (x1, x2) needed by the copula density.
+//   2. Priors -- weakly informative priors on all active parameters.
+//   3. Likelihoods -- marginal log-densities + copula log-density.
+// ---------------------------------------------------------------------------
 model {
-  // Compute probability integral transforms
+  // Stage 1: CDF transform (probability integral transform)
   vector[N] x1;
   vector[N] x2;
   
@@ -52,7 +88,7 @@ model {
     x2 = beta_cdf_vec(y2, alpha2[1], beta2[1]);
   }
   
-  // --- Priors ---
+  // Stage 2: Priors
   
   // Marginal priors for y1
   if (dist1 == 1 || dist1 == 2) {
@@ -85,7 +121,7 @@ model {
     theta_joe ~ lognormal(log(2), 0.5); // lower-bounded at 1: median=2
   }
   
-  // --- Marginal likelihoods ---
+  // Stage 3a: Marginal likelihoods
   
   if (dist1 == 1) {
     y1 ~ normal(mu1[1], sigma1[1]);
@@ -107,7 +143,7 @@ model {
     y2 ~ beta(alpha2[1], beta2[1]);
   }
   
-  // --- Copula log-likelihood ---
+  // Stage 3b: Copula log-likelihood
   
   if (copula_type == 1) {
     for (n in 1 : N) {
@@ -123,6 +159,13 @@ model {
     }
   }
 }
+
+// ---------------------------------------------------------------------------
+// Generated quantities: pointwise log-likelihood for LOO-CV via the loo
+// package.  Each log_lik[n] = log f(y1_n) + log f(y2_n) + log c(u_n, v_n),
+// i.e. the sum of marginal log-densities and the copula log-density for
+// observation n.
+// ---------------------------------------------------------------------------
 generated quantities {
   vector[N] log_lik; // pointwise log-likelihood for LOO-CV
   {

@@ -12,8 +12,21 @@
 \item{...}{Additional arguments (unused).}
 }
 \value{
-A tibble of parameter summaries from \code{posterior::summarise_draws()}.
+A tibble from \code{\link[posterior:draws_summary]{posterior::summarise_draws()}} with one row
+per parameter and columns for summary statistics and diagnostics.
 }
 \description{
-Summarize a copula_fit object
+Returns a tibble of posterior summaries for the model parameters,
+including mean, median, standard deviation, MAD, quantiles, and
+convergence diagnostics (Rhat, ESS).
+}
+\examples{
+\dontrun{
+fit <- fit_bivariate_copula(data,
+  copula = "gaussian",
+  marginals = c("normal", "lognormal")
+)
+summary(fit)
+}
+
 }

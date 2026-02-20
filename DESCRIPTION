@@ -24,5 +24,6 @@ Suggests:
     copula
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-URL: https://benlug.github.io/copulaStan/
+URL: https://benlug.github.io/copulaStan/, https://github.com/benlug/copulaStan
+BugReports: https://github.com/benlug/copulaStan/issues
 Additional_repositories: https://stan-dev.r-universe.dev

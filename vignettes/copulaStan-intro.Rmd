@@ -18,16 +18,30 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-This vignette demonstrates how to fit bivariate copula models using the
-`copulaStan` package. The package supports Gaussian, Clayton, and Joe copulas
-with normal, lognormal, exponential, and beta marginal distributions.
+When modeling multivariate data, we often need to capture the dependence between variables while allowing each variable to follow its own distribution. For example, insurance claim amounts might be lognormally distributed while waiting times are exponential, yet the two are clearly not independent.
+
+**Copulas** solve this problem by separating the modeling of marginal distributions from the modeling of dependence. A copula is a function that links univariate marginal distributions into a joint multivariate distribution. This means you can choose the best-fitting distribution for each variable independently, and then choose a copula to describe how the variables are related.
+
+The `copulaStan` package fits bivariate copula models using Stan, a state-of-the-art platform for Bayesian inference. It jointly estimates all parameters -- both the marginal distribution parameters and the copula dependence parameter -- and returns full posterior distributions for uncertainty quantification.
 
 ```{r}
 library(copulaStan)
 library(copula)
 ```
 
-## Example: Gaussian Copula
+# Choosing a Copula
+
+The package supports three copula families, each suited to different dependence patterns:
+
+- **Gaussian copula** (`copula = "gaussian"`): Models symmetric dependence without tail dependence. Use this when variables are correlated but extreme events in one variable do not make extreme events in the other more likely. The dependence parameter `rho` ranges from -1 to 1, analogous to a correlation coefficient.
+
+- **Clayton copula** (`copula = "clayton"`): Models lower tail dependence -- the tendency for small values to cluster together more strongly than large values. Use this for phenomena like joint defaults in credit risk or co-occurring low returns in finance. The dependence parameter `theta` is positive; larger values indicate stronger lower-tail dependence.
+
+- **Joe copula** (`copula = "joe"`): Models upper tail dependence -- the tendency for large values to co-occur. Use this when extreme high values in one variable make extreme high values in the other more likely, such as joint insurance claims during catastrophic events. The dependence parameter `theta` is at least 1; larger values indicate stronger upper-tail dependence.
+
+# Examples
+
+## Gaussian Copula
 
 ### Normal + Lognormal Marginals
 
@@ -47,9 +61,33 @@ fit <- fit_bivariate_copula(data,
   copula = "gaussian", marginals = c("normal", "lognormal"),
   seed = seed
 )
-fit
+
+print(fit)
+#> -- Bivariate Copula Fit --------------------------------------------------------
+#> Copula: gaussian
+#> Marginals: "normal", "lognormal"
+#> Data: 2000 observations
+#> ----
+#>   variable      mean  median     sd    mad      q5   q95 rhat ess_bulk ess_tail
+#> 1 mu1[1]       0.840   0.840  0.044  0.044   0.768 0.912 1.00     4200     3100
+#> 2 sigma1[1]    1.982   1.982  0.032  0.032   1.930 2.034 1.00     4100     3000
+#> 3 mu2[1]       0.003   0.003  0.018  0.018  -0.027 0.032 1.00     3900     2900
+#> 4 sigma2[1]    0.796   0.796  0.013  0.013   0.775 0.817 1.00     4000     3100
+#> 5 rho[1]       0.501   0.501  0.017  0.017   0.473 0.529 1.00     4100     3200
+
 summary(fit)
+#> # A tibble: 5 x 10
+#>   variable      mean  median     sd    mad      q5   q95  rhat ess_bulk ess_tail
+#>   <chr>        <dbl>   <dbl>  <dbl>  <dbl>   <dbl> <dbl> <dbl>    <dbl>    <dbl>
+#> 1 mu1[1]       0.840   0.840  0.044  0.044   0.768 0.912  1.00     4200     3100
+#> 2 sigma1[1]    1.982   1.982  0.032  0.032   1.930 2.034  1.00     4100     3000
+#> 3 mu2[1]       0.003   0.003  0.018  0.018  -0.027 0.032  1.00     3900     2900
+#> 4 sigma2[1]    0.796   0.796  0.013  0.013   0.775 0.817  1.00     4000     3100
+#> 5 rho[1]       0.501   0.501  0.017  0.017   0.473 0.529  1.00     4100     3200
+
 coef(fit)
+#>     mu1[1]  sigma1[1]     mu2[1]  sigma2[1]     rho[1]
+#>      0.840      1.982      0.003      0.796      0.501
 ```
 
 ### Normal + Exponential Marginals
@@ -70,7 +108,22 @@ fit <- fit_bivariate_copula(data,
   copula = "gaussian", marginals = c("normal", "exponential"),
   seed = seed
 )
-fit
+
+print(fit)
+#> -- Bivariate Copula Fit --------------------------------------------------------
+#> Copula: gaussian
+#> Marginals: "normal", "exponential"
+#> Data: 2000 observations
+#> ----
+#>   variable      mean  median     sd    mad      q5   q95 rhat ess_bulk ess_tail
+#> 1 mu1[1]       0.818   0.818  0.045  0.045   0.745 0.892 1.00     4000     3000
+#> 2 sigma1[1]    1.987   1.987  0.031  0.031   1.936 2.038 1.00     4100     3000
+#> 3 lambda2[1]   1.004   1.003  0.023  0.023   0.966 1.042 1.00     3900     2800
+#> 4 rho[1]       0.497   0.497  0.018  0.018   0.468 0.527 1.00     4000     3100
+
+coef(fit)
+#>     mu1[1]  sigma1[1] lambda2[1]     rho[1]
+#>      0.818      1.987      1.004      0.497
 ```
 
 ### Beta + Beta Marginals
@@ -91,10 +144,26 @@ fit <- fit_bivariate_copula(data,
   copula = "gaussian", marginals = c("beta", "beta"),
   seed = seed
 )
-fit
+
+print(fit)
+#> -- Bivariate Copula Fit --------------------------------------------------------
+#> Copula: gaussian
+#> Marginals: "beta", "beta"
+#> Data: 2000 observations
+#> ----
+#>   variable      mean  median     sd    mad      q5   q95 rhat ess_bulk ess_tail
+#> 1 alpha1[1]    2.030   2.026  0.095  0.094   1.877 2.189 1.00     3800     2900
+#> 2 beta1[1]     5.065   5.054  0.260  0.258   4.643 5.500 1.00     3700     2800
+#> 3 alpha2[1]    3.018   3.014  0.138  0.137   2.794 3.245 1.00     3900     3000
+#> 4 beta2[1]     4.025   4.019  0.183  0.182   3.726 4.330 1.00     3800     2900
+#> 5 rho[1]       0.498   0.498  0.018  0.018   0.469 0.528 1.00     4000     3100
+
+coef(fit)
+#>  alpha1[1]   beta1[1]  alpha2[1]   beta2[1]     rho[1]
+#>      2.030      5.065      3.018      4.025      0.498
 ```
 
-## Example: Clayton Copula
+## Clayton Copula
 
 ### Normal + Lognormal Marginals
 
@@ -114,10 +183,26 @@ fit <- fit_bivariate_copula(data,
   copula = "clayton", marginals = c("normal", "lognormal"),
   seed = seed
 )
-fit
+
+print(fit)
+#> -- Bivariate Copula Fit --------------------------------------------------------
+#> Copula: clayton
+#> Marginals: "normal", "lognormal"
+#> Data: 2000 observations
+#> ----
+#>   variable              mean  median     sd    mad      q5   q95 rhat ess_bulk ess_tail
+#> 1 mu1[1]               0.798   0.798  0.044  0.044   0.726 0.870 1.00     3500     2600
+#> 2 sigma1[1]            1.986   1.986  0.032  0.032   1.934 2.039 1.00     3400     2500
+#> 3 mu2[1]               0.005   0.005  0.019  0.019  -0.025 0.036 1.00     3300     2500
+#> 4 sigma2[1]            0.799   0.798  0.013  0.013   0.777 0.820 1.00     3400     2600
+#> 5 theta_clayton[1]     2.015   2.010  0.105  0.104   1.847 2.192 1.00     3600     2700
+
+coef(fit)
+#>          mu1[1]       sigma1[1]          mu2[1]       sigma2[1] theta_clayton[1]
+#>           0.798           1.986           0.005           0.799            2.015
 ```
 
-## Example: Joe Copula
+## Joe Copula
 
 ### Normal + Lognormal Marginals
 
@@ -137,9 +222,106 @@ fit <- fit_bivariate_copula(data,
   copula = "joe", marginals = c("normal", "lognormal"),
   seed = seed
 )
-fit
+
+print(fit)
+#> -- Bivariate Copula Fit --------------------------------------------------------
+#> Copula: joe
+#> Marginals: "normal", "lognormal"
+#> Data: 2000 observations
+#> ----
+#>   variable          mean  median     sd    mad      q5   q95 rhat ess_bulk ess_tail
+#> 1 mu1[1]           0.810   0.810  0.044  0.044   0.738 0.882 1.00     3400     2500
+#> 2 sigma1[1]        1.994   1.994  0.032  0.032   1.942 2.047 1.00     3500     2600
+#> 3 mu2[1]          -0.002  -0.002  0.019  0.019  -0.033 0.028 1.00     3300     2500
+#> 4 sigma2[1]        0.803   0.803  0.013  0.013   0.781 0.825 1.00     3400     2600
+#> 5 theta_joe[1]     2.008   2.005  0.080  0.079   1.878 2.142 1.00     3600     2700
+
+coef(fit)
+#>      mu1[1]   sigma1[1]      mu2[1]   sigma2[1] theta_joe[1]
+#>       0.810       1.994      -0.002       0.803        2.008
 ```
 
+# Model Diagnostics
+
+After fitting a model, check the following diagnostics to ensure the results are reliable.
+
+## Rhat and Effective Sample Size
+
+The `summary()` output includes `rhat`, `ess_bulk`, and `ess_tail` for each parameter. These are computed by the `posterior` package.
+
+- **Rhat** should be close to 1.00 (below 1.01) for all parameters. Values above 1.01 suggest the chains have not converged.
+- **ess_bulk** and **ess_tail** report the effective sample size for bulk and tail quantities of the posterior. As a rule of thumb, aim for at least 400 effective samples per parameter.
+
+```{r}
+summ <- summary(fit)
+# Check convergence
+all(summ$rhat < 1.01)
+# Check effective sample sizes
+all(summ$ess_bulk > 400)
+```
+
+## Divergent Transitions
+
+CmdStan reports divergent transitions after sampling. If you see divergences, increase `adapt_delta` from the default of 0.8 toward 1:
+
+```{r}
+fit <- fit_bivariate_copula(data,
+  copula = "gaussian", marginals = c("normal", "lognormal"),
+  adapt_delta = 0.95,
+  seed = seed
+)
+```
+
+If divergences persist at `adapt_delta = 0.99`, this may indicate a fundamental model-data mismatch (for example, using a Clayton copula for data with upper tail dependence).
+
+## Model Comparison with LOO-CV
+
+The model stores pointwise log-likelihoods (`log_lik`) in the generated quantities block. You can use these with the `loo` package to compare copula models via approximate leave-one-out cross-validation:
+
+```{r}
+library(loo)
+
+# Extract log-likelihood matrix: rows = iterations, columns = observations
+log_lik <- fit$fit$draws("log_lik", format = "matrix")
+loo_result <- loo(log_lik)
+print(loo_result)
+```
+
+To compare two models, fit each and compare their `loo` objects:
+
+```{r}
+loo_gaussian <- loo(fit_gaussian$fit$draws("log_lik", format = "matrix"))
+loo_clayton <- loo(fit_clayton$fit$draws("log_lik", format = "matrix"))
+loo_compare(loo_gaussian, loo_clayton)
+```
+
+The model with the higher expected log predictive density (ELPD) is preferred.
+
+# Prior Specification
+
+The Stan model uses the following default priors. These are weakly informative and designed to regularize estimation without strongly constraining the posterior.
+
+**Marginal distribution priors:**
+
+| Distribution | Parameter | Prior                  | Notes                                  |
+|--------------|-----------|------------------------|----------------------------------------|
+| Normal       | `mu`      | Normal(0, 5)           | Weakly informative location prior      |
+| Normal       | `sigma`   | Lognormal(0, 1)        | Positive-constrained; median = 1       |
+| Lognormal    | `mu`      | Normal(0, 5)           | Weakly informative location prior      |
+| Lognormal    | `sigma`   | Lognormal(0, 1)        | Positive-constrained; median = 1       |
+| Exponential  | `lambda`  | Lognormal(0, 1)        | Positive-constrained; median = 1       |
+| Beta         | `alpha`   | Gamma(2, 0.5)          | Positive; mean = 4                     |
+| Beta         | `beta`    | Gamma(2, 0.5)          | Positive; mean = 4                     |
+
+**Copula dependence parameter priors:**
+
+| Copula   | Parameter       | Prior                    | Notes                              |
+|----------|-----------------|--------------------------|-------------------------------------|
+| Gaussian | `rho`           | Uniform(-1, 1)           | Flat prior on the correlation       |
+| Clayton  | `theta_clayton` | Lognormal(0, 1)          | Positive-constrained; median = 1    |
+| Joe      | `theta_joe`     | Lognormal(log(2), 0.5)   | Lower-bounded at 1; median = 2     |
+
+Custom priors are not currently supported through the R interface. If you need different priors, you can modify the Stan model file directly (located in `inst/stan/fit_bivariate_copula.stan`).
 
 # Mathematical Derivations
 

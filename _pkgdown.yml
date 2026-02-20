@@ -1,4 +1,56 @@
 url: https://benlug.github.io/copulaStan/
+
 template:
   bootstrap: 5
+  bootswatch: cosmo
 
+home:
+  title: "copulaStan: Bivariate Copula Models with Stan"
+  description: >
+    Fit bivariate Gaussian, Clayton, and Joe copula models with flexible
+    marginal distributions using Bayesian inference via CmdStan.
+
+navbar:
+  structure:
+    left:
+      - intro
+      - reference
+      - news
+    right:
+      - github
+  components:
+    intro:
+      text: Get Started
+      href: articles/copulaStan-intro.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    news:
+      text: Changelog
+      href: news/index.html
+    github:
+      icon: fa-github
+      href: https://github.com/benlug/copulaStan
+      aria-label: GitHub
+
+reference:
+  - title: Fitting Models
+    desc: Main function for fitting bivariate copula models.
+    contents:
+      - fit_bivariate_copula
+  - title: Working with Results
+    desc: S3 methods for inspecting and extracting results from fitted models.
+    contents:
+      - print.copula_fit
+      - summary.copula_fit
+      - coef.copula_fit
+  - title: Internals
+    desc: Internal constructor and utilities (not intended for direct use).
+    contents:
+      - copula_fit
+      - get_stan_model
+
+footer:
+  structure:
+    left: developed_by
+    right: built_with

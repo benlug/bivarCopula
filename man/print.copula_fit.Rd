@@ -12,8 +12,20 @@
 \item{...}{Additional arguments (unused).}
 }
 \value{
-Invisibly returns \code{x}.
+Invisibly returns the \code{copula_fit} object \code{x}, allowing
+usage in pipelines.
 }
 \description{
-Print a copula_fit object
+Displays a summary of the fitted copula model including the copula type,
+marginal distributions, sample size, and a parameter summary table.
+}
+\examples{
+\dontrun{
+fit <- fit_bivariate_copula(data,
+  copula = "gaussian",
+  marginals = c("normal", "lognormal")
+)
+print(fit)
+}
+
 }
