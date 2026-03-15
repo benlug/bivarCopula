@@ -41,11 +41,11 @@ sticker(p,
         h_color = "#00008B",
         spotlight = TRUE,
         l_x = 1, l_y = 1, l_alpha = 0.3,
-        url = "copulaStan",
+        url = "bivarCopula",
         u_size = 4,
         u_color = "#FFFFFF",
-        filename = "inst/figures/copulaStan_hex.png")  # Output file
+        filename = "inst/figures/bivarCopula_hex.png")  # Output file
 
-sticker_img <- png::readPNG("inst/figures/copulaStan_hex.png")
+sticker_img <- png::readPNG("inst/figures/bivarCopula_hex.png")
 grid::grid.raster(sticker_img)
 

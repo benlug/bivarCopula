@@ -1,11 +1,11 @@
 # Internal environment to cache compiled Stan model
-.copulaStan_env <- new.env(parent = emptyenv())
+.bivarCopula_env <- new.env(parent = emptyenv())
 
 #' Get the compiled Stan model (compiles on first use, caches for reuse)
 #' @keywords internal
 get_stan_model <- function() {
-    if (!is.null(.copulaStan_env$model)) {
-        return(.copulaStan_env$model)
+    if (!is.null(.bivarCopula_env$model)) {
+        return(.bivarCopula_env$model)
     }
 
     if (!requireNamespace("cmdstanr", quietly = TRUE)) {
@@ -20,7 +20,7 @@ get_stan_model <- function() {
     }
 
     stan_file <- system.file("stan", "fit_bivariate_copula.stan",
-        package = "copulaStan"
+        package = "bivarCopula"
     )
 
 
@@ -39,6 +39,6 @@ get_stan_model <- function() {
         include_paths = dirname(stan_file)
     )
 
-    .copulaStan_env$model <- model
+    .bivarCopula_env$model <- model
     model
 }

@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(copulaStan)
+library(bivarCopula)
 
-test_check("copulaStan")
+test_check("bivarCopula")

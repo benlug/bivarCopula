@@ -81,7 +81,7 @@ test_that("accepts U with exactly 2 observations", {
     # This will fail at the Stan step (no cmdstan), so we call validate_inputs directly.
     U <- matrix(c(1, 2, 3, 4), ncol = 2)
     expect_true(
-        copulaStan:::validate_inputs(U, copula = "gaussian", marginals = c("normal", "normal"))
+        bivarCopula:::validate_inputs(U, copula = "gaussian", marginals = c("normal", "normal"))
     )
 })
 

@@ -1,4 +1,4 @@
-# copulaStan 0.5.0
+# bivarCopula 0.5.0
 
 ## Breaking Changes
 
@@ -48,7 +48,7 @@
 * Added: `cmdstanr`, `posterior`, `cli`
 * Removed: `rstan`, `BH`, `RcppEigen`
 
-# copulaStan 0.4.0
+# bivarCopula 0.4.0
 
 ## New Features
 
@@ -60,13 +60,13 @@
 
 * Fixed minor bugs related to marginal distribution handling.
 
-# copulaStan 0.3.1
+# bivarCopula 0.3.1
 
 ## Improvements
 
 * Unified copula functions into a single `fit_bivariate_copula()` entry point.
 
-# copulaStan 0.3.0
+# bivarCopula 0.3.0
 
 ## New Features
 
@@ -74,14 +74,14 @@
   marginal parameter estimation. Supports normal and lognormal marginals.
 * Included introductory vignette.
 
-# copulaStan 0.2.0
+# bivarCopula 0.2.0
 
 ## New Features
 
 * Added functions to fit Clayton copula models.
 * Improved documentation.
 
-# copulaStan 0.1.0
+# bivarCopula 0.1.0
 
 ## Initial Release
 

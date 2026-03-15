@@ -1,4 +1,4 @@
-url: https://benlug.github.io/copulaStan/
+url: https://benlug.github.io/bivarCopula/
 
 template:
   bootstrap: 5
@@ -10,7 +10,7 @@ template:
     btn-border-radius: 0.25rem
 
 home:
-  title: "copulaStan: Bayesian Bivariate Copula Models with Stan"
+  title: "bivarCopula: Bayesian Bivariate Copula Models with Stan"
   description: >
     Fit bivariate Gaussian, Clayton, and Joe copula models with flexible
     marginal distributions using full Bayesian inference via CmdStan.
@@ -28,7 +28,7 @@ navbar:
   components:
     intro:
       text: Get Started
-      href: articles/copulaStan-intro.html
+      href: articles/bivarCopula-intro.html
     reference:
       text: Reference
       href: reference/index.html
@@ -37,7 +37,7 @@ navbar:
       href: news/index.html
     github:
       icon: fa-github
-      href: https://github.com/benlug/copulaStan
+      href: https://github.com/benlug/bivarCopula
       aria-label: GitHub
 
 reference:

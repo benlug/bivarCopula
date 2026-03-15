@@ -116,7 +116,7 @@ The Stan model uses the following weakly informative priors:
 \examples{
 \dontrun{
 library(copula)
-library(copulaStan)
+library(bivarCopula)
 
 set.seed(2024)
 n <- 1000

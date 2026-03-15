@@ -1,4 +1,4 @@
-Package: copulaStan
+Package: bivarCopula
 Title: Fit Bivariate Copula Models Using Stan
 Version: 0.5.0
 Authors@R: 
@@ -24,6 +24,6 @@ Suggests:
     copula
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-URL: https://benlug.github.io/copulaStan/, https://github.com/benlug/copulaStan
-BugReports: https://github.com/benlug/copulaStan/issues
+URL: https://benlug.github.io/bivarCopula/, https://github.com/benlug/bivarCopula
+BugReports: https://github.com/benlug/bivarCopula/issues
 Additional_repositories: https://stan-dev.r-universe.dev

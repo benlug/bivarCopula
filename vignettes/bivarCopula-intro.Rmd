@@ -1,8 +1,8 @@
 ---
-title: "Getting Started with copulaStan"
+title: "Getting Started with bivarCopula"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Getting Started with copulaStan}
+  %\VignetteIndexEntry{Getting Started with bivarCopula}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,10 +21,10 @@ When modeling multivariate data, we often need to capture the dependence between
 
 **Copulas** solve this by separating the modeling of marginal distributions from the modeling of dependence. A copula links univariate marginal distributions into a joint multivariate distribution, so you can choose the best-fitting distribution for each variable independently and then choose a copula to describe how the variables relate.
 
-`copulaStan` fits bivariate copula models using Stan for full Bayesian inference. It jointly estimates all parameters -- both the marginal distribution parameters and the copula dependence parameter -- and returns posterior distributions for uncertainty quantification.
+`bivarCopula` fits bivariate copula models using Stan for full Bayesian inference. It jointly estimates all parameters -- both the marginal distribution parameters and the copula dependence parameter -- and returns posterior distributions for uncertainty quantification.
 
 ```{r}
-library(copulaStan)
+library(bivarCopula)
 library(copula)
 ```
 
