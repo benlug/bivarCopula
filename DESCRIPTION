@@ -1,6 +1,6 @@
 Package: bivarCopula
 Title: Fit Bivariate Copula Models Using Stan
-Version: 0.5.0
+Version: 0.5.1
 Authors@R: 
     person("Benedikt", "Lugauer", email = "benedikt.lugauer@pm.me", role = c("aut", "cre"))
 Description: Provides Stan wrapper functions to fit bivariate Gaussian, Clayton, and Joe

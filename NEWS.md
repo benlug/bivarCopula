@@ -1,3 +1,13 @@
+# bivarCopula 0.5.1
+
+## Improvements
+
+* Rewrote the Getting Started vignette with a more formal and expanded
+  introduction to model specification, diagnostics, priors, and copula
+  interpretation.
+* Updated pkgdown deployment to use GitHub Pages Actions and restored
+  automatic publication of the package website.
+
 # bivarCopula 0.5.0
 
 ## Breaking Changes
