@@ -26,10 +26,10 @@
 
 ## Bug Fixes
 
-* **Fixed incorrect Joe copula density formula.** The previous implementation
+* Fixed incorrect Joe copula density formula. The previous implementation
   did not match the standard derivation from the Joe copula CDF. Results from
   previous Joe copula fits are invalid.
-* **Added CDF clamping** to prevent numerical issues (NaN/Inf) when marginal
+* Added CDF clamping to prevent numerical issues (NaN/Inf) when marginal
   CDF values are exactly 0 or 1 during sampling.
 * Fixed minor bug in Gaussian copula log-likelihood where `square(rho)` was
   computed twice instead of reusing `rho_sq`.
