@@ -1,21 +1,23 @@
-# bivarCopula [<img src="man/figures/bivarCopula_hex.png" align="right" width="15%" height="15%" alt="bivarCopula logo"/>](https://benlug.github.io/bivarCopula/)
+# bivarCopula: Bayesian Bivariate Copula Models with Stan
 
+[<img src="man/figures/bivarCopula_hex.png" align="right" width="15%" height="15%" alt="bivarCopula logo"/>](https://benlug.github.io/bivarCopula/)
+
+<!-- badges: start -->
 [![R-CMD-check](https://github.com/benlug/bivarCopula/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/benlug/bivarCopula/actions/workflows/R-CMD-check.yaml)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+<!-- badges: end -->
 
-`bivarCopula` is an R package for fitting Bayesian bivariate copula models with [Stan](https://mc-stan.org/). It estimates marginal distribution parameters and the copula dependence parameter jointly, returning posterior draws that support uncertainty quantification, convergence diagnostics, and model comparison.
-
-## Features
-
-- Bayesian estimation with a `cmdstanr` backend
-- Gaussian, Clayton, and Joe copula families
-- Normal, lognormal, exponential, and beta marginals
-- S3 methods for `print()`, `summary()`, and `coef()`
-- Pointwise log-likelihood draws for `loo`-based comparison
+`bivarCopula` is an R package for fitting Bayesian bivariate copula models
+with [Stan](https://mc-stan.org/). It estimates marginal distribution
+parameters and the copula dependence parameter jointly, returning posterior
+draws for uncertainty quantification, convergence diagnostics, and model
+comparison.
 
 ## Installation
 
-`bivarCopula` depends on [`cmdstanr`](https://mc-stan.org/cmdstanr/) and a working CmdStan installation.
+`bivarCopula` depends on [`cmdstanr`](https://mc-stan.org/cmdstanr/) and a
+working CmdStan installation.
 
 Install `cmdstanr` and CmdStan:
 
@@ -36,7 +38,8 @@ remotes::install_github("benlug/bivarCopula")
 
 ## Example
 
-The example below simulates data from a Gaussian copula with normal and lognormal marginals, then fits the corresponding Bayesian model.
+The example below simulates data from a Gaussian copula with normal and
+lognormal marginals, then fits the corresponding Bayesian model.
 
 ```r
 library(bivarCopula)
@@ -66,7 +69,8 @@ summary(fit)
 coef(fit)
 ```
 
-You can compare alternative copula families with `loo` using the stored pointwise log-likelihood draws:
+You can compare alternative copula families with `loo` using the stored
+pointwise log-likelihood draws:
 
 ```r
 fit_clayton <- fit_bivariate_copula(
@@ -101,7 +105,8 @@ loo_compare(loo_gaussian, loo_clayton)
 | Exponential | `lambda` | Positive data |
 | Beta | `alpha`, `beta` | Data in `(0, 1)` |
 
-Each variable can use a different marginal distribution, giving 16 supported marginal combinations for each copula family.
+Each variable can use a different marginal distribution, giving 16 supported
+marginal combinations for each copula family.
 
 ## Documentation
 
@@ -110,7 +115,15 @@ Each variable can use a different marginal distribution, giving 16 supported mar
 - Function reference: <https://benlug.github.io/bivarCopula/reference/index.html>
 - Changelog: <https://benlug.github.io/bivarCopula/news/index.html>
 
+## Citation
+
+If you use `bivarCopula` in your work, cite it with:
+
+```r
+citation("bivarCopula")
+```
+
 ## Getting Help
 
 - Report bugs or request features at <https://github.com/benlug/bivarCopula/issues>
-- For a fuller walkthrough, start with the introductory vignette on the package website
+- For usage questions, include a minimal reproducible example when possible
