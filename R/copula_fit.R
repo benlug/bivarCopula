@@ -159,6 +159,7 @@ coef.copula_fit <- function(object, ...) {
 #' loo(fit)
 #' }
 #'
+#' @importFrom loo loo
 #' @export
 loo.copula_fit <- function(x, ...) {
     log_lik <- x$fit$draws("log_lik", format = "matrix")

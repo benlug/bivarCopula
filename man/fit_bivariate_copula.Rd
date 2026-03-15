@@ -8,9 +8,9 @@ fit_bivariate_copula(
   U,
   copula,
   marginals,
-  iter = 1000,
+  iter_sampling = 1000,
   chains = 4,
-  warmup = 1000,
+  iter_warmup = 1000,
   thin = 1,
   seed = NULL,
   adapt_delta = 0.8,
@@ -30,12 +30,12 @@ data. Each column corresponds to one variable.}
 distributions. Each element must be one of \code{"normal"}, \code{"lognormal"},
 \code{"exponential"}, or \code{"beta"}.}
 
-\item{iter}{Number of sampling iterations per chain (after warmup).
+\item{iter_sampling}{Number of sampling iterations per chain (after warmup).
 Default is 1000.}
 
 \item{chains}{Number of MCMC chains. Default is 4.}
 
-\item{warmup}{Number of warmup iterations per chain. Default is 1000.}
+\item{iter_warmup}{Number of warmup iterations per chain. Default is 1000.}
 
 \item{thin}{Thinning rate. Default is 1.}
 
