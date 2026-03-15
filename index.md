@@ -1,24 +1,13 @@
-# bivarCopula [![bivarCopula logo](reference/figures/bivarCopula_hex.png)](https://benlug.github.io/bivarCopula/)
+# bivarCopula: Bayesian Bivariate Copula Models with Stan
 
-[![R-CMD-check](https://github.com/benlug/bivarCopula/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/benlug/bivarCopula/actions/workflows/R-CMD-check.yaml)
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![bivarCopula
+logo](reference/figures/bivarCopula_hex.png)](https://benlug.github.io/bivarCopula/)
 
 `bivarCopula` is an R package for fitting Bayesian bivariate copula
 models with [Stan](https://mc-stan.org/). It estimates marginal
 distribution parameters and the copula dependence parameter jointly,
-returning posterior draws that support uncertainty quantification,
-convergence diagnostics, and model comparison.
-
-## Features
-
-- Bayesian estimation with a `cmdstanr` backend
-- Gaussian, Clayton, and Joe copula families
-- Normal, lognormal, exponential, and beta marginals
-- S3 methods for [`print()`](https://rdrr.io/r/base/print.html),
-  [`summary()`](https://rdrr.io/r/base/summary.html), and
-  [`coef()`](https://rdrr.io/r/stats/coef.html)
-- Pointwise log-likelihood draws for `loo`-based comparison
+returning posterior draws for uncertainty quantification, convergence
+diagnostics, and model comparison.
 
 ## Installation
 
@@ -123,9 +112,17 @@ supported marginal combinations for each copula family.
   <https://benlug.github.io/bivarCopula/reference/index.html>
 - Changelog: <https://benlug.github.io/bivarCopula/news/index.html>
 
+## Citation
+
+If you use `bivarCopula` in your work, cite it with:
+
+``` r
+citation("bivarCopula")
+```
+
 ## Getting Help
 
 - Report bugs or request features at
   <https://github.com/benlug/bivarCopula/issues>
-- For a fuller walkthrough, start with the introductory vignette on the
-  package website
+- For usage questions, include a minimal reproducible example when
+  possible

@@ -65,23 +65,12 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="bivarcopula-">bivarCopula <a href="https://benlug.github.io/bivarCopula/"><img src="reference/figures/bivarCopula_hex.png" align="right" width="15%" height="15%" alt="bivarCopula logo"></a>
-<a class="anchor" aria-label="anchor" href="#bivarcopula-"></a>
+<div class="page-header"><h1 id="bivarcopula-bayesian-bivariate-copula-models-with-stan">bivarCopula: Bayesian Bivariate Copula Models with Stan<a class="anchor" aria-label="anchor" href="#bivarcopula-bayesian-bivariate-copula-models-with-stan"></a>
 </h1></div>
-<p><a href="https://github.com/benlug/bivarCopula/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/benlug/bivarCopula/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></p>
-<p><code>bivarCopula</code> is an R package for fitting Bayesian bivariate copula models with <a href="https://mc-stan.org/" class="external-link">Stan</a>. It estimates marginal distribution parameters and the copula dependence parameter jointly, returning posterior draws that support uncertainty quantification, convergence diagnostics, and model comparison.</p>
-<div class="section level2">
-<h2 id="features">Features<a class="anchor" aria-label="anchor" href="#features"></a>
-</h2>
-<ul>
-<li>Bayesian estimation with a <code>cmdstanr</code> backend</li>
-<li>Gaussian, Clayton, and Joe copula families</li>
-<li>Normal, lognormal, exponential, and beta marginals</li>
-<li>S3 methods for <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, and <code><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef()</a></code>
-</li>
-<li>Pointwise log-likelihood draws for <code>loo</code>-based comparison</li>
-</ul>
-</div>
+<p><a href="https://benlug.github.io/bivarCopula/"><img src="reference/figures/bivarCopula_hex.png" align="right" width="15%" height="15%" alt="bivarCopula logo"></a></p>
+<!-- badges: start -->
+
+<p><code>bivarCopula</code> is an R package for fitting Bayesian bivariate copula models with <a href="https://mc-stan.org/" class="external-link">Stan</a>. It estimates marginal distribution parameters and the copula dependence parameter jointly, returning posterior draws for uncertainty quantification, convergence diagnostics, and model comparison.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -237,12 +226,19 @@
 </ul>
 </div>
 <div class="section level2">
+<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h2>
+<p>If you use <code>bivarCopula</code> in your work, cite it with:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"bivarCopula"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="getting-help">Getting Help<a class="anchor" aria-label="anchor" href="#getting-help"></a>
 </h2>
 <ul>
 <li>Report bugs or request features at <a href="https://github.com/benlug/bivarCopula/issues" class="external-link uri">https://github.com/benlug/bivarCopula/issues</a>
 </li>
-<li>For a fuller walkthrough, start with the introductory vignette on the package website</li>
+<li>For usage questions, include a minimal reproducible example when possible</li>
 </ul>
 </div>
 </div>
@@ -277,7 +273,14 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/benlug/bivarCopula/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/benlug/bivarCopula/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>
