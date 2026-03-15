@@ -55,6 +55,7 @@ reference:
       - print.copula_fit
       - summary.copula_fit
       - coef.copula_fit
+      - loo.copula_fit
   - title: Internals
     desc: >
       Internal constructor and utilities. These are documented for
