@@ -19,7 +19,7 @@ test_that("returns copula_fit with correct metadata for Gaussian copula", {
 
     fit <- fit_bivariate_copula(data,
         copula = "gaussian", marginals = c("normal", "lognormal"),
-        iter = 200, chains = 2, warmup = 200,
+        iter_sampling = 200, chains = 2, iter_warmup = 200,
         seed = 2024, refresh = 0
     )
 
@@ -53,7 +53,7 @@ test_that("returns copula_fit with theta_clayton for Clayton copula", {
 
     fit <- fit_bivariate_copula(data,
         copula = "clayton", marginals = c("normal", "lognormal"),
-        iter = 200, chains = 2, warmup = 200,
+        iter_sampling = 200, chains = 2, iter_warmup = 200,
         seed = 2024, refresh = 0
     )
 
@@ -77,7 +77,7 @@ test_that("returns copula_fit with theta_joe for Joe copula", {
 
     fit <- fit_bivariate_copula(data,
         copula = "joe", marginals = c("normal", "lognormal"),
-        iter = 200, chains = 2, warmup = 200,
+        iter_sampling = 200, chains = 2, iter_warmup = 200,
         seed = 2024, refresh = 0
     )
 

@@ -391,8 +391,8 @@ Several arguments can be adjusted to improve estimation:
 
 | Argument | Role |
 |:---------|:-----|
-| `iter` | Number of post-warmup iterations per chain |
-| `warmup` | Number of warmup iterations per chain |
+| `iter_sampling` | Number of post-warmup iterations per chain |
+| `iter_warmup` | Number of warmup iterations per chain |
 | `chains` | Number of Markov chains |
 | `parallel_chains` | Number of chains run in parallel |
 | `adapt_delta` | Target acceptance rate for NUTS |
@@ -409,7 +409,7 @@ permits approximate leave-one-out cross-validation with the `loo` package.
 ```{r}
 library(loo)
 
-loo_result <- loo(fit$fit$draws("log_lik", format = "matrix"))
+loo_result <- loo(fit)
 print(loo_result)
 ```
 
@@ -431,8 +431,8 @@ fit_clayton <- fit_bivariate_copula(
   seed = seed
 )
 
-loo_gaussian <- loo(fit_gaussian$fit$draws("log_lik", format = "matrix"))
-loo_clayton <- loo(fit_clayton$fit$draws("log_lik", format = "matrix"))
+loo_gaussian <- loo(fit_gaussian)
+loo_clayton <- loo(fit_clayton)
 
 loo_compare(loo_gaussian, loo_clayton)
 ```

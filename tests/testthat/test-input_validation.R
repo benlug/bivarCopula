@@ -213,17 +213,17 @@ test_that("errors when second column violates positivity constraint", {
 
 # --- MCMC parameter validation ---
 
-test_that("errors when iter is invalid", {
+test_that("errors when iter_sampling is invalid", {
     U <- matrix(rnorm(20), ncol = 2)
     expect_error(
         fit_bivariate_copula(U, copula = "gaussian", marginals = c("normal", "normal"),
-                             iter = -1),
-        "iter"
+                             iter_sampling = -1),
+        "iter_sampling"
     )
     expect_error(
         fit_bivariate_copula(U, copula = "gaussian", marginals = c("normal", "normal"),
-                             iter = 0),
-        "iter"
+                             iter_sampling = 0),
+        "iter_sampling"
     )
 })
 
@@ -236,12 +236,12 @@ test_that("errors when chains is invalid", {
     )
 })
 
-test_that("errors when warmup is negative", {
+test_that("errors when iter_warmup is negative", {
     U <- matrix(rnorm(20), ncol = 2)
     expect_error(
         fit_bivariate_copula(U, copula = "gaussian", marginals = c("normal", "normal"),
-                             warmup = -1),
-        "warmup"
+                             iter_warmup = -1),
+        "iter_warmup"
     )
 })
 

@@ -19,6 +19,17 @@ get_stan_model <- function() {
         ))
     }
 
+    cmdstan_path <- tryCatch(
+        cmdstanr::cmdstan_path(),
+        error = function(e) NULL
+    )
+    if (is.null(cmdstan_path)) {
+        cli::cli_abort(c(
+            "CmdStan is not installed.",
+            "i" = "Run: {.code cmdstanr::install_cmdstan()}"
+        ))
+    }
+
     stan_file <- system.file("stan", "fit_bivariate_copula.stan",
         package = "bivarCopula"
     )

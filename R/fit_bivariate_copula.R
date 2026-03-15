@@ -13,10 +13,10 @@
 #' @param marginals A character vector of length 2 specifying the marginal
 #'   distributions. Each element must be one of `"normal"`, `"lognormal"`,
 #'   `"exponential"`, or `"beta"`.
-#' @param iter Number of sampling iterations per chain (after warmup).
+#' @param iter_sampling Number of sampling iterations per chain (after warmup).
 #'   Default is 1000.
 #' @param chains Number of MCMC chains. Default is 4.
-#' @param warmup Number of warmup iterations per chain. Default is 1000.
+#' @param iter_warmup Number of warmup iterations per chain. Default is 1000.
 #' @param thin Thinning rate. Default is 1.
 #' @param seed Random seed for reproducibility. Default is `NULL`.
 #' @param adapt_delta Target acceptance rate for NUTS. Default is 0.8.
@@ -108,13 +108,13 @@
 #'
 #' @export
 fit_bivariate_copula <- function(U, copula, marginals,
-                                 iter = 1000, chains = 4, warmup = 1000,
+                                 iter_sampling = 1000, chains = 4, iter_warmup = 1000,
                                  thin = 1, seed = NULL,
                                  adapt_delta = 0.8, max_treedepth = 10,
                                  parallel_chains = 1, refresh = 500) {
   # --- Input validation ---
   validate_inputs(U, copula, marginals)
-  validate_mcmc_params(iter, chains, warmup, thin, seed, adapt_delta,
+  validate_mcmc_params(iter_sampling, chains, iter_warmup, thin, seed, adapt_delta,
                        max_treedepth, parallel_chains, refresh)
 
   N <- nrow(U)
@@ -172,8 +172,8 @@ fit_bivariate_copula <- function(U, copula, marginals,
   fit <- tryCatch(
     model$sample(
       data = stan_data,
-      iter_sampling = iter,
-      iter_warmup = warmup,
+      iter_sampling = iter_sampling,
+      iter_warmup = iter_warmup,
       chains = chains,
       thin = thin,
       seed = seed,
@@ -187,7 +187,7 @@ fit_bivariate_copula <- function(U, copula, marginals,
       cli::cli_abort(
         c(
           "Stan sampling failed.",
-          "i" = "Try increasing {.arg iter} or {.arg warmup}.",
+          "i" = "Try increasing {.arg iter_sampling} or {.arg iter_warmup}.",
           "i" = "Try increasing {.arg adapt_delta} (e.g. 0.95 or 0.99).",
           "i" = "Check that your data is compatible with the chosen marginals.",
           "x" = "Original error: {conditionMessage(e)}"
@@ -304,9 +304,9 @@ validate_inputs <- function(U, copula, marginals) {
 #' Checks that all MCMC parameters (iterations, chains, warmup, etc.)
 #' are valid before passing them to CmdStan.
 #'
-#' @param iter Number of sampling iterations per chain.
+#' @param iter_sampling Number of sampling iterations per chain.
 #' @param chains Number of MCMC chains.
-#' @param warmup Number of warmup iterations per chain.
+#' @param iter_warmup Number of warmup iterations per chain.
 #' @param thin Thinning rate.
 #' @param seed Random seed or `NULL`.
 #' @param adapt_delta Target acceptance rate for NUTS.
@@ -317,17 +317,17 @@ validate_inputs <- function(U, copula, marginals) {
 #' @return `TRUE` invisibly if all checks pass; aborts otherwise.
 #' @keywords internal
 #' @noRd
-validate_mcmc_params <- function(iter, chains, warmup, thin, seed,
+validate_mcmc_params <- function(iter_sampling, chains, iter_warmup, thin, seed,
                                  adapt_delta, max_treedepth, parallel_chains,
                                  refresh) {
-  if (!is.numeric(iter) || length(iter) != 1 || iter < 1) {
-    cli::cli_abort("{.arg iter} must be a positive integer, not {.val {iter}}.")
+  if (!is.numeric(iter_sampling) || length(iter_sampling) != 1 || iter_sampling < 1) {
+    cli::cli_abort("{.arg iter_sampling} must be a positive integer, not {.val {iter_sampling}}.")
   }
   if (!is.numeric(chains) || length(chains) != 1 || chains < 1) {
     cli::cli_abort("{.arg chains} must be a positive integer, not {.val {chains}}.")
   }
-  if (!is.numeric(warmup) || length(warmup) != 1 || warmup < 0) {
-    cli::cli_abort("{.arg warmup} must be a non-negative integer, not {.val {warmup}}.")
+  if (!is.numeric(iter_warmup) || length(iter_warmup) != 1 || iter_warmup < 0) {
+    cli::cli_abort("{.arg iter_warmup} must be a non-negative integer, not {.val {iter_warmup}}.")
   }
   if (!is.numeric(thin) || length(thin) != 1 || thin < 1) {
     cli::cli_abort("{.arg thin} must be a positive integer, not {.val {thin}}.")

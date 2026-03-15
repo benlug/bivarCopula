@@ -8,8 +8,9 @@ Description: Provides Stan wrapper functions to fit bivariate Gaussian, Clayton,
     using 'CmdStan' via the 'instantiate' package for fast sampling.
 Depends: 
     R (>= 4.1.0)
-Imports: 
+Imports:
     posterior,
+    loo,
     cli
 License: MIT + file LICENSE
 Encoding: UTF-8

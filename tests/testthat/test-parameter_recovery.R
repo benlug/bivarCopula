@@ -23,7 +23,7 @@ test_that("recovers rho for Gaussian copula with normal marginals", {
 
     fit <- fit_bivariate_copula(data,
         copula = "gaussian", marginals = c("normal", "normal"),
-        iter = 500, chains = 2, warmup = 500,
+        iter_sampling = 500, chains = 2, iter_warmup = 500,
         seed = 42, refresh = 0
     )
 
@@ -51,7 +51,7 @@ test_that("recovers theta for Clayton copula with normal marginals", {
 
     fit <- fit_bivariate_copula(data,
         copula = "clayton", marginals = c("normal", "normal"),
-        iter = 500, chains = 2, warmup = 500,
+        iter_sampling = 500, chains = 2, iter_warmup = 500,
         seed = 42, refresh = 0
     )
 
@@ -79,7 +79,7 @@ test_that("recovers theta for Joe copula with normal marginals", {
 
     fit <- fit_bivariate_copula(data,
         copula = "joe", marginals = c("normal", "normal"),
-        iter = 500, chains = 2, warmup = 500,
+        iter_sampling = 500, chains = 2, iter_warmup = 500,
         seed = 42, refresh = 0
     )
 

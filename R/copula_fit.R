@@ -140,6 +140,32 @@ coef.copula_fit <- function(object, ...) {
 }
 
 
+#' Compute LOO-CV for a copula_fit
+#'
+#' Approximate leave-one-out cross-validation using Pareto smoothed
+#' importance sampling (PSIS-LOO).
+#'
+#' @param x A `copula_fit` object.
+#' @param ... Additional arguments passed to [loo::loo()].
+#'
+#' @return A `loo` object from the `loo` package.
+#'
+#' @examples
+#' \dontrun{
+#' fit <- fit_bivariate_copula(data,
+#'   copula = "gaussian",
+#'   marginals = c("normal", "lognormal")
+#' )
+#' loo(fit)
+#' }
+#'
+#' @export
+loo.copula_fit <- function(x, ...) {
+    log_lik <- x$fit$draws("log_lik", format = "matrix")
+    loo::loo(log_lik, ...)
+}
+
+
 #' Get relevant parameter names for a copula_fit object
 #'
 #' Determines which Stan parameter names are relevant based on the
